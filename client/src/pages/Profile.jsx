@@ -1,38 +1,46 @@
 import React, { useEffect, useState } from 'react'
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { FaCommentAlt } from "react-icons/fa";
-import Comments from './Comments';
-import { getAllPosts, likePost } from '..';
-import { Link } from 'react-router-dom';
-function Post() {
-
-    const [posts, setPosts] = useState(null);
-
+import { getPostbyuserid, getUserById } from '..'
+import { useParams } from 'react-router-dom'
+import profile from "../../public/profile.png";
+import { FaCommentAlt } from 'react-icons/fa';
+import { AiFillLike } from 'react-icons/ai';
+import { Link, useNavigate } from "react-router-dom";
+function Profile() {
+    const [user, setUser] = useState('')
+    const [posts, setPosts] = useState(null)
+    const { id } = useParams();
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getAllPosts()
-            setPosts(data);
+            const data = await getUserById(id);
+            setUser(data)
         }
-        fetchData();
-    }, [])
-
-
-    const [like, setLike] = useState(false);
-    const isliked =async (post_id,user_id) => {
-        const data=await likePost(post_id,user_id)
-        setLike((p) => !p);
-    }
-    const [comments, setComments] = useState(false);
-    const isComment = () => {
-        setComments((p) => !p);
-    }
+        fetchData()
+    })
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getPostbyuserid(id);
+            setPosts(data)
+        }
+        fetchData()
+    },[])
     return (
-        <div className='card'>
-            <div className=" w-full ">
+        <div className='px-20 mt-10'>
+            <div className='grid grid-cols-2'>
+                <div> 
+                <div className='avatar w-56 h-56 '>
+                    <img src={user ? user.profilePicture : profile} alt="profile" className='w-full h-full rounded-full' />
+                </div>
+                <div>
+                    <h1 className='text-2xl'>{user?.username}</h1>
+                    <h2 className='text-lg'>{user?.email}</h2>
+                </div>
+                </div>
+                <div>
+                <div className=" w-full flex flex-wrap p-4">
                 {
                     posts?.map((post) => ((
-                        <div key={post._id} className='my-6'>
-                            <div className='flex items-center w-full justify-between'>
+                        <div key={post._id} className='w-1/2 px-4'>
+                            <div className='flex items-center w-full justify-between my-6'>
                                 <div className='flex gap-4'>
                                     <Link className="w-16 h-16" to={`/user/${post.user._id}`} >
                                         <img
@@ -65,30 +73,15 @@ function Post() {
                                     alt="post image"
                                     className='rounded-lg' />
                             </figure>
-                            <div className='pt-2 flex items-center gap-4 '>
-                    <div className='flex gap-2 cursor-pointer' onClick={()=>isliked(post._id,post.user._id)} >
-                        <AiFillLike
-                            className={`${like ? 'text-red-400 ' : ""} text-2xl`} />
-                        <span>like</span>
-                    </div>
-
-                    <div className='flex gap-2 cursor-pointer' onClick={isComment}>
-                        <FaCommentAlt className=' text-xl mt-1' />
-                        <span>comments</span>
-                    </div>
-                </div>
                         </div>
-
                     )))
                 }
-               
-                <div className={`${comments ? "" : "hidden"}`}>
-                    <Comments />
-                    <Comments />
+              
+            </div>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Post
+export default Profile

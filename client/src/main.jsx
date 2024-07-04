@@ -6,6 +6,8 @@ import './index.css'
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import UpdatePassword from './pages/UpdatePassword.jsx';
+import Profile from './pages/Profile.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
         path: '/register',
         element: <Register />,
       },
+      {
+        path: '/updatepassword',
+        element: <UpdatePassword />,
+      },
+      {
+        path:'/user/:id',
+        element:<Profile/>
+      }
     ],
   },
 ]);

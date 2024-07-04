@@ -1,8 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
+
 const PostSchema = new Schema(
   {
-    title: {
+    content: {
       type: String,
       required: true,
     },
@@ -10,14 +11,22 @@ const PostSchema = new Schema(
       type: String,
       required: true,
     },
-    tags: {
-      type: String,
+    tags:{
+        type: String,
+      }
+    ,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
   },
   {
     timestamps: true,
   }
 );
+
+
 
 const Post = mongoose.model("Post", PostSchema);
 

@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { uploadPost } from '..';
 
 function CreatePost() {
-  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [postImage, setPostImage] = useState(null);
   const [tags, setTags] = useState('');
 
   const submitPost = async (e) => {
     e.preventDefault();
-    const data = await uploadPost({ title, post_image: postImage, tags });
-    console.log(data);
+    const data = await uploadPost({ content, post_image: postImage, tags });
+    setContent('');
+    setPostImage(null);
+    setTags('');
     document.getElementById('my_modal_5').close();
   };
 
@@ -20,8 +22,8 @@ function CreatePost() {
           type="text"
           className="grow"
           placeholder="What's on your mind"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -45,8 +47,8 @@ function CreatePost() {
                   type="text"
                   className="grow"
                   placeholder="Write title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </label>
               <label className="input input-bordered flex items-center gap-2">

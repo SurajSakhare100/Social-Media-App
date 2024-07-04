@@ -19,8 +19,7 @@ function Register() {
         password,
         profilePic:avatar,
       });
-      console.log(user)
-      // navigate('/login');
+      navigate('/login');
     } catch (error) {
       console.log(error.message);
     }

@@ -1,10 +1,12 @@
 import express from 'express'
 import { upload } from "../middlewares/multer.middleware.js";
-import { getAllPosts, uploadPosts } from "../controllers/post.controller.js";
+import { getAllPosts, getPostByUserId, uploadPosts } from "../controllers/post.controller.js";
+import { verifyJWT } from '../middlewares/auth.middleware.js';
 
 const router=express.Router();
 
-router.post('/uploadpost',upload.single('post_image'),uploadPosts);
-router.get('/getAllPosts',getAllPosts)
+router.post('/uploadpost',verifyJWT,upload.single('post_image'),uploadPosts);
+router.get('/getAllPosts',verifyJWT,getAllPosts)
+router.get('/getpostbyuserid/:id',getPostByUserId)
 
 export default router

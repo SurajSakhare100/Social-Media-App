@@ -129,13 +129,14 @@ const loginUser = asyncHandler(async (req, res) =>{
   const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
   const options = {
-      httpOnly: true,
-      secure: true
+    httpOnly: true,
+    secure: true, // Make sure to set this in production with HTTPS
+    sameSite: 'strict'
   }
 
   return res
   .status(200)
-  .cookie("accessToken", accessToken, options)
+  .cookie("accessToken", accessToken,options)
   .cookie("refreshToken", refreshToken, options)
   .json(
       new ApiResponse(
@@ -192,6 +193,43 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, req.user, "User fetched successfully"));
 });
+
+const getAllUser = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find({}).limit(5).select('-password -refreshToken');
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, users, "Users fetched successfully"));
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+const getUserById = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params; // Correctly destructure id from req.params
+    const user = await User.findById(id); // Await the result of the findById operation
+
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "User not found"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "User fetched successfully"));
+  } catch (error) {
+    console.log(error.message); // Corrected typo 'messege' to 'message'
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 export {
   registerUser,
   loginUser,
@@ -199,4 +237,5 @@ export {
   logoutUser,
   getCurrentUser,
   changeCurrentPassword,
+  getUserById,getAllUser,
 };
