@@ -1,6 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { getCurrentUser, logoutUser } from '..'
 
 function Navbar() {
+    const [user,setUser]=useState('')
+    const logoutuser = async () => {
+        const data = await logoutUser();
+        console.log(data)
+    }
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getCurrentUser();
+            setUser(data)
+            console.log(user)
+        }
+        fetchData()
+    }, [])
     return (
         <div className="navbar bg-base-200 sticky top-0 z-10">
             <div className="navbar-start">
@@ -45,7 +59,7 @@ function Navbar() {
                             </a>
                         </li>
                         <li><a>Settings</a></li>
-                        <li><a>Logout</a></li>
+                        <li className='cursor-pointer' onClick={logoutuser}>Logout</li>
                     </ul>
                 </div>
                 <label className="swap swap-rotate">

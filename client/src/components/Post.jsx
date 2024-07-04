@@ -28,27 +28,28 @@ function Post() {
     return (
         <div className='card'>
             <div className=" w-full shadow-xl p-4">
-                <div className='flex items-center gap-4 w-full py-2'>
-                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ">
-                        <div className="w-10 rounded-full ">
-                            <img
-                                alt="Tailwind CSS Navbar component"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
-                        </div>
 
-                    </div>
-                    <div>
-                        <h1 className='text-lg'>Avatar</h1>
-                        <h3 className='text-sm'>profile</h3>
-                    </div>
-                </div>
 
                 {
                     posts?.map((post) => ((
                         <div key={post._id}>
+                            <div className='flex items-center gap-4 w-full py-2'>
+                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar ">
+                                    <div className="w-10 rounded-full ">
+                                        <img
+                                            alt="Tailwind CSS Navbar component"
+                                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                    </div>
+
+                                </div>
+                                <div>
+                                    <h1 className='text-lg'>Avatar</h1>
+                                    <h3 className='text-sm'>profile</h3>
+                                </div>
+                            </div>
                             <div className="card-normal py-2">
                                 <h2 className="card-title">
-                                {post.title}
+                                    {post.title}
                                 </h2>
                             </div>
                             <figure>

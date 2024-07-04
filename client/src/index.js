@@ -48,3 +48,65 @@ export const uploadPost = async (post) => {
     return handleError(error);
   }
 };
+
+
+export const registerUser = async (user) => {
+  try {
+    const formData = new FormData();
+    for (const key in user) {
+      formData.append(key, user[key]);
+    }
+
+    // Log FormData content for debugging
+    for (const pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+
+    const response = await axios.post(
+      url + "/api/v1/user/registerUser",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const loginUser= async(user)=>{
+  try {
+    const response = await axios.post(
+      url + "/api/v1/user/loginUser",
+      user,
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+export const logoutUser= async()=>{
+  try {
+    const response = await axios.post(
+      url + "/api/v1/user/logout",
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+export const getCurrentUser= async()=>{
+  try {
+    const response = await axios.get(
+      url + "/api/v1/user/getuser",
+    );
+    console.log(response)
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
