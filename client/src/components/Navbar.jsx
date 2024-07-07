@@ -23,7 +23,7 @@ function Navbar() {
     return (
         <div className="navbar bg-base-200 sticky top-0 z-10">
             <div className="navbar-start">
-                <a className="btn btn-ghost text-xl">Social Media</a>
+                <Link className="btn btn-ghost text-xl" to={'/'}>Social Media</Link>
             </div>
             <div className="navbar-end gap-4">
                 <div className="form-control">

@@ -49,9 +49,46 @@ const uploadPosts = asyncHandler(async (req, res) => {
 
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
-    const posts = await Post.find().populate('user', 'username profilePicture email'); // Replace 'username' and 'profilePicture' with fields you want to populate
-    return res
-      .status(200)
+    const posts = await Post.aggregate([
+      {
+        $lookup: {
+          from: 'likes', // Collection name for the Like model
+          localField: '_id',
+          foreignField: 'post',
+          as: 'likes'
+        }
+      },
+      {
+        $addFields: {
+          likeCount: { $size: '$likes' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users', // Collection name for the User model
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userDetails'
+        }
+      },
+      {
+        $unwind: '$userDetails'
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          content: 1,
+          post_image:1,
+          likeCount: 1,
+          'userDetails._id': 1,
+          'userDetails.username': 1,
+          'userDetails.profilePicture': 1,
+          'userDetails.email': 1
+        }
+      }
+    ]);
+    res.status(200)
       .json(new ApiResponse(200, posts, "Posts fetched successfully with user details"));
   } catch (error) {
     console.error("Error fetching posts:", error);

@@ -15,7 +15,7 @@ function Post() {
         };
         fetchData();
     }, []);
-
+    console.log(posts)
     const handleLike = async (post_id, user_id) => {
         await likePost(post_id, user_id);
         setPosts((prevPosts) => 
@@ -40,16 +40,16 @@ function Post() {
                     <div key={post._id} className='my-6'>
                         <div className='flex items-center w-full justify-between'>
                             <div className='flex gap-4'>
-                                <Link className="w-16 h-16" to={`/user/${post.user._id}`}>
+                                <Link className="w-16 h-16" to={`/user/${post.userDetails._id}`}>
                                     <img
                                         alt="Profile"
-                                        src={post.user.profilePicture}
+                                        src={post.userDetails.profilePicture}
                                         className='w-full h-full rounded-full'
                                     />
                                 </Link>
                                 <div>
-                                    <h1 className='text-lg'>{post.user.username}</h1>
-                                    <h3 className='text-sm'>{post.user.email}</h3>
+                                    <h1 className='text-lg'>{post.userDetails.username}</h1>
+                                    <h3 className='text-sm'>{post.userDetails.email}</h3>
                                 </div>
                             </div>
                             <div>
@@ -75,14 +75,14 @@ function Post() {
                         <div className='pt-2 flex items-center gap-4'>
                             <div
                                 className='flex gap-2 cursor-pointer'
-                                onClick={() => handleLike(post._id, post.user._id)}
+                                onClick={() => handleLike(post._id, post.userDetails._id)}
                             >
                                 {post.liked ? (
                                     <AiFillLike className='text-red-400 text-2xl' />
                                 ) : (
                                     <AiOutlineLike className='text-2xl' />
                                 )}
-                                <span>Like</span>
+                                <span>{post.likeCount}</span>
                             </div>
 
                             <div
