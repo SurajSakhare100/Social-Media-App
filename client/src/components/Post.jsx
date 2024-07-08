@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
-import { getAllPosts, likePost } from '..';
+import { getAllPosts, getCurrentUser, likePost } from '..';
 import { Link } from 'react-router-dom';
 
 function Post() {
     const [posts, setPosts] = useState([]);
-
+    const [user, setUser] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
             const data = await getAllPosts();
@@ -15,9 +15,16 @@ function Post() {
         };
         fetchData();
     }, []);
-    console.log(posts)
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getCurrentUser();
+            setUser(data);
+        };
+        fetchData();
+    }, [setUser]);
     const handleLike = async (post_id, user_id) => {
-        await likePost(post_id, user_id);
+        const like= await likePost(post_id, user_id);
+        console.log(like)
         setPosts((prevPosts) => 
             prevPosts.map((post) => 
                 post._id === post_id ? { ...post, liked: !post.liked } : post
@@ -75,7 +82,7 @@ function Post() {
                         <div className='pt-2 flex items-center gap-4'>
                             <div
                                 className='flex gap-2 cursor-pointer'
-                                onClick={() => handleLike(post._id, post.userDetails._id)}
+                                onClick={() => handleLike(post._id, user._id)}
                             >
                                 {post.liked ? (
                                     <AiFillLike className='text-red-400 text-2xl' />
