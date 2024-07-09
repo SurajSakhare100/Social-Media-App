@@ -50,22 +50,10 @@ const uploadPosts = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     const posts = await Post.aggregate([
+      
       {
         $lookup: {
-          from: 'likes', // Collection name for the Like model
-          localField: '_id',
-          foreignField: 'post',
-          as: 'likes'
-        }
-      },
-      {
-        $addFields: {
-          likeCount: { $size: '$likes' }
-        }
-      },
-      {
-        $lookup: {
-          from: 'users', // Collection name for the User model
+          from: 'users', 
           localField: 'user',
           foreignField: '_id',
           as: 'userDetails'
@@ -80,7 +68,6 @@ const getAllPosts = asyncHandler(async (req, res) => {
           title: 1,
           content: 1,
           post_image:1,
-          likeCount: 1,
           'userDetails._id': 1,
           'userDetails.username': 1,
           'userDetails.profilePicture': 1,
@@ -88,6 +75,10 @@ const getAllPosts = asyncHandler(async (req, res) => {
         }
       }
     ]);
+
+    posts.likesCount += 1;
+    await posts.save;
+    console.log(posts)
     res.status(200)
       .json(new ApiResponse(200, posts, "Posts fetched successfully with user details"));
   } catch (error) {

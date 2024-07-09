@@ -161,7 +161,19 @@ export const getAllUser = async (id) => {
 export const likePost = async (post_id,user_id) => {
   try {
     const response = await axios.post(
-      url + `/api/v1/like/addlike`,
+      url + `/api/v1/like/likePost`,
+      {post_id,user_id},
+      { withCredentials: true }
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+export const unlikePost = async (post_id,user_id) => {
+  try {
+    const response = await axios.post(
+      url + `/api/v1/like/unlikePost`,
       {post_id,user_id},
       { withCredentials: true }
     );

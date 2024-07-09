@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
-import { getAllPosts, getCurrentUser, likePost } from '..';
+import { getAllPosts, getCurrentUser, likePost, unlikePost } from '..';
 import { Link } from 'react-router-dom';
 
 function Post() {
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(null);
+    const [liked, setLiked] = useState(0);
+    const [likesCount, setLikesCount] = useState(0);
     useEffect(() => {
         const fetchData = async () => {
             const data = await getAllPosts();
@@ -22,14 +24,23 @@ function Post() {
         };
         fetchData();
     }, [setUser]);
-    const handleLike = async (post_id, user_id) => {
-        const like= await likePost(post_id, user_id);
-        console.log(like)
-        setPosts((prevPosts) => 
-            prevPosts.map((post) => 
-                post._id === post_id ? { ...post, liked: !post.liked } : post
-            )
-        );
+    console.log(posts)
+    const handleLike = async (post_id,user_id) => {
+        try {
+            if (liked) {
+                const like=await likePost(post_id,user_id);
+                console.log(like)
+                setLikesCount(likesCount - 1);
+                setLiked(0);
+            } else {
+                await unlikePost(post_id,user_id)
+                setLikesCount(likesCount + 1);
+                setLiked(1);
+            }
+            setLiked(!liked);
+        } catch (error) {
+            console.error('Error liking/unliking post:', error);
+        }
     };
 
     const toggleComments = (post_id) => {
@@ -84,7 +95,7 @@ function Post() {
                                 className='flex gap-2 cursor-pointer'
                                 onClick={() => handleLike(post._id, user._id)}
                             >
-                                {post.liked ? (
+                                {liked ? (
                                     <AiFillLike className='text-red-400 text-2xl' />
                                 ) : (
                                     <AiOutlineLike className='text-2xl' />
