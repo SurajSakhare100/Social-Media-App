@@ -11,9 +11,9 @@ const axiosInstance = axios.create({
   },
 });
 
-export const getAllPosts = async (ids) => {
+export const getAllPosts = async (userId) => {
   try {
-    const response = await axiosInstance.get(url + "/api/v1/post/getAllPosts", {
+    const response = await axiosInstance.get(url + `/api/v1/post/getAllPosts/${userId}`, {
       withCredentials: true,
     });
     return handleResponse(response);

@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import Post from "../models/posts.model.js";
+import { isValidObjectId } from "mongoose";
 
 const uploadPosts = asyncHandler(async (req, res) => {
   try {
@@ -49,49 +50,83 @@ const uploadPosts = asyncHandler(async (req, res) => {
 
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
+    const userId = req.query.userId; // Assume userId is passed as a query parameter
+
     const posts = await Post.aggregate([
-      
       {
         $lookup: {
-          from: 'users', 
-          localField: 'user',
-          foreignField: '_id',
-          as: 'userDetails'
-        }
+          from: "likes",
+          localField: "_id",
+          foreignField: "post",
+          as: "likes",
+        },
       },
       {
-        $unwind: '$userDetails'
+        $unwind: {
+          path: "$likes",
+          preserveNullAndEmptyArrays: true, // Preserve posts with no likes
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "likes.user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true, // Preserve likes with no user details
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          content: { $first: "$content" },
+          post_image: { $first: "$post_image" },
+          users: { $push: "$userDetails" },
+          likeCount: { $sum: { $cond: [{ $ifNull: ["$likes", false] }, 1, 0] } },
+        },
+      },
+      {
+        $addFields: {
+          liked: {
+            $in: [isValidObjectId(userId), "$users._id"],
+          },
+        },
       },
       {
         $project: {
           _id: 1,
-          title: 1,
           content: 1,
-          post_image:1,
-          'userDetails._id': 1,
-          'userDetails.username': 1,
-          'userDetails.profilePicture': 1,
-          'userDetails.email': 1
-        }
-      }
+          post_image: 1,
+          users: 1,
+          likeCount: 1,
+          liked: 1,
+        },
+      },
     ]);
 
-    posts.likesCount += 1;
-    await posts.save;
-    console.log(posts)
-    res.status(200)
-      .json(new ApiResponse(200, posts, "Posts fetched successfully with user details"));
+    res.status(200).json(
+      new ApiResponse(200, posts, "Posts fetched successfully with user details")
+    );
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 const getPostByUserId = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
     // Use Mongoose's find method to fetch posts by user ID
-    const posts = await Post.find({ user: id }).populate('user', 'username profilePicture email'); 
+    const posts = await Post.find({ user: id }).populate(
+      "user",
+      "username profilePicture email"
+    );
 
     if (!posts || posts.length === 0) {
       return res
@@ -108,9 +143,4 @@ const getPostByUserId = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
-export { uploadPosts, getAllPosts ,
-  getPostByUserId
-};
+export { uploadPosts, getAllPosts, getPostByUserId };

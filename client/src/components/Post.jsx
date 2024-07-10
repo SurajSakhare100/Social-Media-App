@@ -3,50 +3,57 @@ import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
 import { getAllPosts, getCurrentUser, likePost, unlikePost } from '..';
-import { Link } from 'react-router-dom';
 
 function Post() {
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(null);
-    const [liked, setLiked] = useState(0);
-    const [likesCount, setLikesCount] = useState(0);
+
     useEffect(() => {
-        const fetchData = async () => {
-            const data = await getAllPosts();
-            setPosts(data);
+        const fetchUser = async () => {
+            const userData = await getCurrentUser();
+            setUser(userData);
         };
+        const fetchData = async () => {
+            const postData = await getAllPosts(user?._id);
+            setPosts(postData);
+        };
+        fetchUser();
         fetchData();
     }, []);
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getCurrentUser();
-            setUser(data);
-        };
-        fetchData();
-    }, [setUser]);
-    console.log(posts)
-    const handleLike = async (post_id,user_id) => {
+
+    const handleLike = async (postId) => {
+        if (!user) return; // Ensure user is fetched
         try {
-            if (liked) {
-                const like=await likePost(post_id,user_id);
-                console.log(like)
-                setLikesCount(likesCount - 1);
-                setLiked(0);
-            } else {
-                await unlikePost(post_id,user_id)
-                setLikesCount(likesCount + 1);
-                setLiked(1);
-            }
-            setLiked(!liked);
+            const updatedPosts = posts.map(post => {
+                if (post._id === postId) {
+                    if (post.liked) {
+                        unlikePost(postId, user._id);
+                        return {
+                            ...post,
+                            liked: false,
+                            likeCount: post.likeCount - 1
+                        };
+                    } else {
+                        likePost(postId, user._id);
+                        return {
+                            ...post,
+                            liked: true,
+                            likeCount: post.likeCount + 1
+                        };
+                    }
+                }
+                return post;
+            });
+            setPosts(updatedPosts);
         } catch (error) {
             console.error('Error liking/unliking post:', error);
         }
     };
 
-    const toggleComments = (post_id) => {
-        setPosts((prevPosts) => 
-            prevPosts.map((post) => 
-                post._id === post_id ? { ...post, showComments: !post.showComments } : post
+    const toggleComments = (postId) => {
+        setPosts((prevPosts) =>
+            prevPosts.map((post) =>
+                post._id === postId ? { ...post, showComments: !post.showComments } : post
             )
         );
     };
@@ -54,28 +61,8 @@ function Post() {
     return (
         <div className='card'>
             <div className="w-full">
-                {posts.map((post) => (
+                {posts?.map((post) => (
                     <div key={post._id} className='my-6'>
-                        <div className='flex items-center w-full justify-between'>
-                            <div className='flex gap-4'>
-                                <Link className="w-16 h-16" to={`/user/${post.userDetails._id}`}>
-                                    <img
-                                        alt="Profile"
-                                        src={post.userDetails.profilePicture}
-                                        className='w-full h-full rounded-full'
-                                    />
-                                </Link>
-                                <div>
-                                    <h1 className='text-lg'>{post.userDetails.username}</h1>
-                                    <h3 className='text-sm'>{post.userDetails.email}</h3>
-                                </div>
-                            </div>
-                            <div>
-                                <button className="btn btn-primary">
-                                    Follow
-                                </button>
-                            </div>
-                        </div>
                         <div className="card-normal py-2">
                             <h2 className="card-title">
                                 {post.content}
@@ -93,9 +80,9 @@ function Post() {
                         <div className='pt-2 flex items-center gap-4'>
                             <div
                                 className='flex gap-2 cursor-pointer'
-                                onClick={() => handleLike(post._id, user._id)}
+                                onClick={() => handleLike(post._id)}
                             >
-                                {liked ? (
+                                {post.liked ? (
                                     <AiFillLike className='text-red-400 text-2xl' />
                                 ) : (
                                     <AiOutlineLike className='text-2xl' />
