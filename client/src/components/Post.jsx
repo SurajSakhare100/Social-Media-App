@@ -12,13 +12,19 @@ function Post() {
         const fetchUser = async () => {
             const userData = await getCurrentUser();
             setUser(userData);
+            return userData;
         };
-        const fetchData = async () => {
-            const postData = await getAllPosts(user?._id);
+
+        const fetchData = async (userId) => {
+            const postData = await getAllPosts(userId);
             setPosts(postData);
         };
-        fetchUser();
-        fetchData();
+
+        fetchUser().then(userData => {
+            if (userData) {
+                fetchData(userData._id);
+            }
+        });
     }, []);
 
     const handleLike = async (postId) => {
