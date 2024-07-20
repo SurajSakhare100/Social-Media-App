@@ -1,27 +1,55 @@
-import Comment from "../models/comment.model";
-import { asyncHandler } from "../utils/asyncHandler";
+import mongoose from "mongoose";
+import Comment from "../models/comment.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-const getAllCommentsOfPost=asyncHandler((async (req,res)=>{
-    try {
+const getAllCommentsOfPost = asyncHandler(async (req, res) => {
+  try {
+    const postId = req.params.postId;
 
-        // get Post Id
-        // group by Post Id and return it
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: "Invalid Post ID" });
+    }
 
-        const {postId}=req.params.Id
+    const objectId = new mongoose.Types.ObjectId(postId);
 
-        const comment=await Comment.aggregate([{
-            $group:{
-                _id:postId,
+    const comments = await Comment.aggregate([
+      { $match: { postId: objectId } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: "$userDetails"
+      },
+      {
+        $group: {
+          _id: "$postId",
+          comments: {
+            $push: {
+              _id: "$_id",
+              comment: "$comments",
+              author: "$author",
+              createdAt: "$createdAt",
+              userPicture: "$userDetails.picture",
+              userName: "$userDetails.name"
             }
-        }])
-
-        res.status(200).json(
-            new ApiResponse(200, comment, "Comments fetched successfully with user details")
-          );
-        } catch (error) {
-          console.error("Error fetching posts:", error);
-          res.status(500).json({ error: "Internal server error" });
+          }
         }
-}))
+      }
+    ]);
 
-export default {getAllCommentsOfPost}
+    res.status(200).json(
+      new ApiResponse(200, comments, "Comments fetched successfully with user details")
+    );
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+export { getAllCommentsOfPost };

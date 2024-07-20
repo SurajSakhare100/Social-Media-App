@@ -22,6 +22,17 @@ export const getAllPosts = async (userId) => {
   }
 };
 
+export const getAllComments = async (postId) => {
+  try {
+    const response = await axiosInstance.get(url + `/api/v1/comments/getallcomments/${postId}`, {
+      withCredentials: true,
+    });
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 export const uploadPost = async (post) => {
   try {
     const formData = new FormData();

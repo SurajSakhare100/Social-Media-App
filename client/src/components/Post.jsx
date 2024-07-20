@@ -26,7 +26,7 @@ function Post() {
             }
         });
     }, []);
-    console.log(posts)
+    // console.log(posts)
     const handleLike = async (postId) => {
         if (!user) return; // Ensure user is fetched
         try {
@@ -63,7 +63,7 @@ function Post() {
             )
         );
     };
-
+// console.log(posts)
     return (
         <div className='card'>
             <div className="w-full">
@@ -107,7 +107,7 @@ function Post() {
 
                         {post.showComments && (
                             <div>
-                                <Comments key={`comments-${post._id}`} />
+                                <Comments id={post._id} />
                             </div>
                         )}
                     </div>
