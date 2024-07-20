@@ -6,7 +6,7 @@ import { verifyJWT } from '../middlewares/auth.middleware.js';
 const router=express.Router();
 
 router.post('/uploadpost',verifyJWT,upload.single('post_image'),uploadPosts);
-router.get('/getAllPosts/:userId',verifyJWT,getAllPosts)
+router.get('/getAllPosts',verifyJWT,getAllPosts)
 router.get('/getpostbyuserid/:id',getPostByUserId)
 
 export default router

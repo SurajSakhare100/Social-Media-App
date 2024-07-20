@@ -26,7 +26,7 @@ function Post() {
             }
         });
     }, []);
-
+    console.log(posts)
     const handleLike = async (postId) => {
         if (!user) return; // Ensure user is fetched
         try {

@@ -3,7 +3,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import Post from "../models/posts.model.js";
-import { isValidObjectId } from "mongoose";
 
 const uploadPosts = asyncHandler(async (req, res) => {
   try {
@@ -50,8 +49,7 @@ const uploadPosts = asyncHandler(async (req, res) => {
 
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
-    const userId = req.query.userId; // Assume userId is passed as a query parameter
-
+    const userId = req.user._id;
     const posts = await Post.aggregate([
       {
         $lookup: {
@@ -64,7 +62,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
       {
         $unwind: {
           path: "$likes",
-          preserveNullAndEmptyArrays: true, // Preserve posts with no likes
+          preserveNullAndEmptyArrays: true, 
         },
       },
       {
@@ -93,7 +91,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
       {
         $addFields: {
           liked: {
-            $in: [isValidObjectId(userId), "$users._id"],
+            $in: [userId, "$users._id"],
           },
         },
       },
@@ -117,6 +115,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 const getPostByUserId = asyncHandler(async (req, res) => {
   try {

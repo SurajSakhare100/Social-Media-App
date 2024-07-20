@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 
 export const getAllPosts = async (userId) => {
   try {
-    const response = await axiosInstance.get(url + `/api/v1/post/getAllPosts/${userId}`, {
+    const response = await axiosInstance.get(url + `/api/v1/post/getAllPosts`, {
       withCredentials: true,
     });
     return handleResponse(response);
