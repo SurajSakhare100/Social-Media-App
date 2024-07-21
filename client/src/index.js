@@ -194,5 +194,19 @@ export const unlikePost = async (post_id,user_id) => {
   }
 };
 
+export const createComment=async (userComment, postId, userId)=>{
+  console.log({userComment, postId, userId})
+  try {
+    const response = await axios.post(
+      url + `/api/v1/comments/createComment`,
+      {userComment, postId, userId},
+      { withCredentials: true }
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
 
 

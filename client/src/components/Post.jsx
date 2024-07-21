@@ -2,45 +2,44 @@ import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
-import { getAllPosts, getCurrentUser, likePost, unlikePost } from '..';
+import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js'; // Assuming these functions are exported from an api.js file
 
 function Post() {
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const userData = await getCurrentUser();
-            setUser(userData);
-            return userData;
-        };
-
-        const fetchData = async (userId) => {
-            const postData = await getAllPosts(userId);
-            setPosts(postData);
-        };
-
-        fetchUser().then(userData => {
-            if (userData) {
-                fetchData(userData._id);
+        const fetchUserAndPosts = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+                if (userData) {
+                    const postData = await getAllPosts(userData._id);
+                    setPosts(postData);
+                }
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
             }
-        });
+        };
+
+        fetchUserAndPosts();
     }, []);
-    // console.log(posts)
+
     const handleLike = async (postId) => {
-        if (!user) return; // Ensure user is fetched
+        if (!user) return;
+
         try {
-            const updatedPosts = posts.map(post => {
+            const updatedPosts = await Promise.all(posts.map(async post => {
                 if (post._id === postId) {
                     if (post.liked) {
-                        unlikePost(postId, user._id);
+                        await unlikePost(postId, user._id);
                         return {
                             ...post,
                             liked: false,
                             likeCount: post.likeCount - 1
                         };
                     } else {
-                        likePost(postId, user._id);
+                        await likePost(postId, user._id);
                         return {
                             ...post,
                             liked: true,
@@ -49,7 +48,7 @@ function Post() {
                     }
                 }
                 return post;
-            });
+            }));
             setPosts(updatedPosts);
         } catch (error) {
             console.error('Error liking/unliking post:', error);
@@ -57,18 +56,22 @@ function Post() {
     };
 
     const toggleComments = (postId) => {
-        setPosts((prevPosts) =>
-            prevPosts.map((post) =>
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
                 post._id === postId ? { ...post, showComments: !post.showComments } : post
             )
         );
     };
-// console.log(posts)
+
+    console.log(posts)
+
     return (
-        <div className='card'>
+        <div className="card">
+            
             <div className="w-full">
-                {posts?.map((post) => (
-                    <div key={post._id} className='my-6'>
+                {posts.map(post => (
+                    <div key={post._id} className="my-6">
+                        <div>user.</div>
                         <div className="card-normal py-2">
                             <h2 className="card-title">
                                 {post.content}
@@ -79,37 +82,33 @@ function Post() {
                                 <img
                                     src={post.post_image}
                                     alt="Post"
-                                    className='rounded-lg'
+                                    className="rounded-lg"
                                 />
                             </figure>
                         )}
-                        <div className='pt-2 flex items-center gap-4'>
+                        <div className="pt-2 flex items-center gap-4">
                             <div
-                                className='flex gap-2 cursor-pointer'
+                                className="flex gap-2 cursor-pointer"
                                 onClick={() => handleLike(post._id)}
                             >
                                 {post.liked ? (
-                                    <AiFillLike className='text-red-400 text-2xl' />
+                                    <AiFillLike className="text-red-400 text-2xl" />
                                 ) : (
-                                    <AiOutlineLike className='text-2xl' />
+                                    <AiOutlineLike className="text-2xl" />
                                 )}
                                 <span>{post.likeCount}</span>
                             </div>
-
                             <div
-                                className='flex gap-2 cursor-pointer'
+                                className="flex gap-2 cursor-pointer"
                                 onClick={() => toggleComments(post._id)}
                             >
-                                <FaCommentAlt className='text-xl mt-1' />
+                                <FaCommentAlt className="text-xl mt-1" />
                                 <span>Comments</span>
                             </div>
                         </div>
 
-                        {post.showComments && (
-                            <div>
-                                <Comments id={post._id} />
-                            </div>
-                        )}
+                        {post.showComments && <Comments postId={post._id} userId={user._id} userPicture={user.profilePicture}/>}
+
                     </div>
                 ))}
             </div>
