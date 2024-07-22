@@ -22,7 +22,7 @@ function Comments({ postId, userId, userPicture }) {
   const handleComment = async (e) => {
     e.preventDefault();
     try {
-      await createComment({ userComment, postId, userId });
+      await createComment({ comment: userComment, postId, userId });
       setUserComment(""); // Clear the input field after submission
       const data = await getAllComments(postId); // Refresh comments after adding a new one
       setComments(data[0]?.comments || []);
@@ -47,9 +47,7 @@ function Comments({ postId, userId, userPicture }) {
                   <img alt="Profile" src={comment.userPicture} />
                 </div>
               </div>
-              <div
-                className="chat-bubble"
-              >
+              <div className="chat-bubble">
                 {comment.comment}
               </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getPostbyuserid, getUserById } from '..'
 import { useParams } from 'react-router-dom'
-import profile from "../../public/profile.png";
+import profile from "/profile.png";
 import { FaCommentAlt } from 'react-icons/fa';
 import { AiFillLike } from 'react-icons/ai';
 import { Link, useNavigate } from "react-router-dom";

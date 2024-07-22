@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
-import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js'; // Assuming these functions are exported from an api.js file
+import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js';
 
 function Post() {
     const [posts, setPosts] = useState([]);
@@ -63,11 +63,8 @@ function Post() {
         );
     };
 
-    console.log(posts)
-
     return (
         <div className="card">
-            
             <div className="w-full">
                 {posts.map(post => (
                     <div key={post._id} className="my-6">
@@ -107,8 +104,7 @@ function Post() {
                             </div>
                         </div>
 
-                        {post.showComments && <Comments postId={post._id} userId={user._id} userPicture={user.profilePicture}/>}
-
+                        {post.showComments && <Comments postId={post._id} userId={user._id} userPicture={user.profilePicture} />}
                     </div>
                 ))}
             </div>
