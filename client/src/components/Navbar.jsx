@@ -2,38 +2,43 @@ import React, { useEffect, useState } from "react";
 import { getCurrentUser, logoutUser } from "..";
 import Profile from "../../public/profile.png";
 import { Link, useNavigate } from "react-router-dom";
+import navLogo from '../../public/nav-logo.webp'
+import { FaSearch } from "react-icons/fa";
 function Navbar() {
     const [user, setUser] = useState(null);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const logoutuser = async () => {
         const data = await logoutUser();
-        data?navigate('/login'):"";
+        data ? navigate('/login') : "";
     };
     useEffect(() => {
         const fetchData = async () => {
             const data = await getCurrentUser();
-            if(!data){
+            if (!data) {
                 navigate('/login')
             }
             setUser(data);
         };
         fetchData();
     }, [setUser]);
-    
+
     return (
         <div className="navbar bg-base-200 sticky top-0 z-10">
             <div className="navbar-start">
-                <Link className="btn btn-ghost text-xl" to={'/'}>Social Media</Link>
+                <Link className="" to={'/'}>
+                    <img src={navLogo} alt="nav-logo" className="w-10" />
+                </Link>
             </div>
             <div className="navbar-end gap-4">
-                <div className="form-control">
+                <div className="form-control relative">
                     <input
                         type="text"
                         placeholder="Search"
-                        className="input input-bordered w-24 md:w-auto"
+                        className="input w-40 h-10 md:w-auto"
                     />
+                    <FaSearch className="absolute right-2 top-[50%] translate-y-[-48%]"/>
                 </div>
-                <button className="btn btn-ghost btn-circle">
+                <button className="btn btn-ghost btn-circle hidden md:block">
                     <div className="indicator">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -70,19 +75,19 @@ function Navbar() {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
                     >
                         <li className="flex">
-                                <Link to={`/user/${user?._id}`}>Profile</Link>
+                            <Link to={`/user/${user?._id}`}>Profile</Link>
                         </li>
                         <li>
-                                <Link to={'/login'}>
-                                    Login
-                                </Link>
+                            <Link to={'/login'}>
+                                Login
+                            </Link>
                         </li>
                         <li className="cursor-pointer" onClick={logoutuser}>
                             <span>Logout</span>
                         </li>
                     </ul>
                 </div>
-                <label className="swap swap-rotate">
+                <label className="swap swap-rotate hidden md:block">
                     {/* this hidden checkbox controls the state */}
                     <input type="checkbox" className="theme-controller" value="light" />
 

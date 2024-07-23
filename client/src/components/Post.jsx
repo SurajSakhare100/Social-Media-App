@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { FaCommentAlt } from "react-icons/fa";
 import Comments from './Comments';
 import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js';
+import { FaCommentAlt, FaCut } from 'react-icons/fa';
 
 function Post() {
     const [posts, setPosts] = useState([]);
@@ -55,6 +55,13 @@ function Post() {
         }
     };
 
+    const showPost = (e) => {
+        const modal = document.getElementById('my_modal_1');
+        const modalImg = document.getElementById('modelImg');
+        modalImg.src = e.target.src;
+        modal.showModal();
+    }
+
     const toggleComments = (postId) => {
         setPosts(prevPosts =>
             prevPosts.map(post =>
@@ -64,22 +71,37 @@ function Post() {
     };
 
     return (
-        <div className="card">
-            <div className="w-full">
+        <div className="">
+            <dialog id="my_modal_1" className="modal px-2" >
+                <div className="modal-box w-fit ">
+                    <form method="dialog">
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-6 top-4">✕</button>
+                        <figure className='w-fit h-80 md:h-[600px] rounded-lg'>
+                            <img
+                                id='modelImg'
+                                className="rounded-lg w-full h-full object-cover"
+                            />
+                        </figure>
+                    </form>
+                </div>
+                <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
+            </dialog>
+
+            <div className="w-full card">
                 {posts.map(post => (
-                    <div key={post._id} className="my-6">
-                        <div>user.</div>
+                    <div key={post._id} className="my-4">
                         <div className="card-normal py-2">
                             <h2 className="card-title">
                                 {post.content}
                             </h2>
                         </div>
                         {post.post_image && (
-                            <figure>
+                            <figure className='aspect-square'>
                                 <img
                                     src={post.post_image}
                                     alt="Post"
-                                    className="rounded-lg"
+                                    className="rounded-lg w-full h-full object-cover object-center"
+                                    onDoubleClick={(e) => showPost(e)}
                                 />
                             </figure>
                         )}

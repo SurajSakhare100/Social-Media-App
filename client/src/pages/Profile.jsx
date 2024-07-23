@@ -22,62 +22,42 @@ function Profile() {
             setPosts(data)
         }
         fetchData()
-    },[])
+    }, [])
     return (
         <div className='px-20 mt-10'>
-            <div className='grid grid-cols-2'>
-                <div> 
-                <div className='avatar w-56 h-56 '>
-                    <img src={user ? user.profilePicture : profile} alt="profile" className='w-full h-full rounded-full' />
+            <div className='w-full md:w-3/4 mx-auto'>
+                <div className='md:py-10 flex gap-6 items-center'>
+                   <div>
+                   <div className='avatar w-56 h-56 '>
+                        <img src={user ? user.profilePicture : profile} alt="profile" className='w-full h-full rounded-full' />
+                    </div>
+                    <div>
+                        <h1 className='text-2xl'>{user?.username}</h1>
+                        <h2 className='text-lg'>{user?.email}</h2>
+                    </div>
+                   </div>
+                    <div><h1 className='w-120'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sapiente neque nesciunt repellat id mollitia facilis fugiat, eaque dolore commodi nam. Modi recusandae animi voluptate qui quia ratione, illo dolor?</h1>
+                    <h1 className='w-120'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sapiente neque nesciunt repellat id mollitia facilis fugiat, eaque dolore commodi nam. Modi recusandae animi voluptate qui quia ratione, illo dolor?</h1></div>
+                    
+
                 </div>
                 <div>
-                    <h1 className='text-2xl'>{user?.username}</h1>
-                    <h2 className='text-lg'>{user?.email}</h2>
-                </div>
-                </div>
-                <div>
-                <div className=" w-full flex flex-wrap p-4">
-                {
-                    posts?.map((post) => ((
-                        <div key={post._id} className='w-1/2 px-4'>
-                            <div className='flex items-center w-full justify-between my-6'>
-                                <div className='flex gap-4'>
-                                    <Link className="w-16 h-16" to={`/user/${post.user._id}`} >
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {
+                            posts?.map((post) => ((
+                                <div key={post._id} className=''>
+                                    <figure className='aspect-square'>
                                         <img
-                                            alt="Tailwind CSS Navbar component"
-                                            src={post.user.profilePicture}
-                                            className='w-full h-full rounded-full'
-                                        />
-
-
-                                    </Link>
-                                    <div>
-                                        <h1 className='text-lg'>{post.user.username}</h1>
-                                        <h3 className='text-sm'>{post.user.email}</h3>
-                                    </div>
+                                            src={post.post_image}
+                                            alt="post image"
+                                            className='rounded-lg w-full h-full' />
+                                    </figure>
                                 </div>
-                                <div>
-                                    <button className="btn btn-primary">
-                                        follow
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="card-normal py-2">
-                                <h2 className="card-title">
-                                    {post.content}
-                                </h2>
-                            </div>
-                            <figure>
-                                <img
-                                    src={post.post_image}
-                                    alt="post image"
-                                    className='rounded-lg' />
-                            </figure>
-                        </div>
-                    )))
-                }
-              
-            </div>
+                            )))
+                        }
+                          
+                         
+                    </div>
                 </div>
             </div>
         </div>
