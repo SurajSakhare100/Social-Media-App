@@ -2,30 +2,48 @@ import React, { useEffect, useState } from "react";
 import { getCurrentUser, logoutUser } from "..";
 import Profile from "../../public/profile.png";
 import { Link, useNavigate } from "react-router-dom";
-import navLogo from '../../public/nav-logo.webp'
+import navLogo from '../../public/nav-logo.webp';
 import { FaSearch } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { setActive, setInactive, userDetails } from "../../app/features/user/userSlice";
+
 function Navbar() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const logoutuser = async () => {
         const data = await logoutUser();
-        data ? navigate('/login') : "";
+        if (data) {
+            dispatch(userDetails(null));
+            dispatch(setInactive());
+            navigate('/');
+        } else {
+            navigate('/login');
+        }
     };
+
     useEffect(() => {
         const fetchData = async () => {
             const data = await getCurrentUser();
             if (!data) {
-                navigate('/login')
+                navigate('/login');
+            } else {
+                setUser(data);
+                dispatch(userDetails(data));
+                dispatch(setActive());
             }
-            setUser(data);
         };
         fetchData();
-    }, [setUser]);
+    }, [dispatch, navigate]);
+
+    const isuser = useSelector((state) => state.user);
+    // console.log(isuser);
 
     return (
         <div className="navbar bg-base-200 sticky top-0 z-10">
             <div className="navbar-start">
-                <Link className="" to={'/'}>
+                <Link to="/">
                     <img src={navLogo} alt="nav-logo" className="w-10" />
                 </Link>
             </div>
@@ -36,7 +54,7 @@ function Navbar() {
                         placeholder="Search"
                         className="input w-40 h-10 md:w-auto"
                     />
-                    <FaSearch className="absolute right-2 top-[50%] translate-y-[-48%]"/>
+                    <FaSearch className="absolute right-2 top-[50%] translate-y-[-50%]" />
                 </div>
                 <button className="btn btn-ghost btn-circle hidden md:block">
                     <div className="indicator">
@@ -65,7 +83,7 @@ function Navbar() {
                     >
                         <div className="w-10 rounded-full">
                             <img
-                                alt="Tailwind CSS Navbar component"
+                                alt="User Avatar"
                                 src={user ? user.profilePicture : Profile}
                             />
                         </div>
@@ -74,13 +92,13 @@ function Navbar() {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
                     >
-                        <li className="flex">
-                            <Link to={`/user/${user?._id}`}>Profile</Link>
-                        </li>
+                        {user && (
+                            <li className="flex">
+                                <Link to={`/user/${user._id}`}>Profile</Link>
+                            </li>
+                        )}
                         <li>
-                            <Link to={'/login'}>
-                                Login
-                            </Link>
+                            <Link to={'/login'}>Login</Link>
                         </li>
                         <li className="cursor-pointer" onClick={logoutuser}>
                             <span>Logout</span>
@@ -88,10 +106,7 @@ function Navbar() {
                     </ul>
                 </div>
                 <label className="swap swap-rotate hidden md:block">
-                    {/* this hidden checkbox controls the state */}
                     <input type="checkbox" className="theme-controller" value="light" />
-
-                    {/* sun icon */}
                     <svg
                         className="swap-off h-6 w-6 fill-current"
                         xmlns="http://www.w3.org/2000/svg"
@@ -99,8 +114,6 @@ function Navbar() {
                     >
                         <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
                     </svg>
-
-                    {/* moon icon */}
                     <svg
                         className="swap-on h-6 w-6 fill-current"
                         xmlns="http://www.w3.org/2000/svg"

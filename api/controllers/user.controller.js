@@ -189,9 +189,10 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
+  const user=req.user;
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "User fetched successfully"));
+    .json(new ApiResponse(200, user, "User fetched successfully"));
 });
 
 const getAllUser = asyncHandler(async (req, res) => {
@@ -211,7 +212,7 @@ const getAllUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params; // Correctly destructure id from req.params
-    const user = await User.findById(id); // Await the result of the findById operation
+    const user = await User.findById(id).select('username email profilePicture');
 
     if (!user) {
       return res

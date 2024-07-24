@@ -5,6 +5,7 @@ import { loginUser } from '..';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
     const handleSubmit=async(e)=>{
         e.preventDefault();
         const data=await loginUser({email,password});
@@ -33,7 +34,7 @@ function Login() {
                                     required
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="john123@gmail.com"
-                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -58,7 +59,7 @@ function Login() {
                                     required
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="******"
-                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>

@@ -208,5 +208,44 @@ export const createComment=async (userComment, postId, userId)=>{
   }
 }
 
+export const fetchFollowers = async (userId) => {
+  try {
+    const response = await axios.get(url+`/api/v1/follow/getFollowers/${userId}`, 
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const handleFollow = async (userId,followingId) => {
+  try {
+    console.log(userId,followingId)
+    const response = await axios.post(
+      url+'/api/v1/follow/handleFollow', {
+        user: userId,
+        following: followingId
+      },
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+export const handleUnfollow = async () => {
+  try {
+    const response = await axios.delete(
+      url+'/api/v1/follow/handleUnfollow', {
+        user: userId,
+        following: followingId},
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
 

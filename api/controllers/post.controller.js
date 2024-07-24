@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import Post from "../models/posts.model.js";
+import User from "../models/user.model.js";
 
 const uploadPosts = asyncHandler(async (req, res) => {
   try {
@@ -116,16 +117,21 @@ const getAllPosts = asyncHandler(async (req, res) => {
   }
 });
 
-
 const getPostByUserId = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Use Mongoose's find method to fetch posts by user ID
-    const posts = await Post.find({ user: id }).populate(
-      "user",
-      "username profilePicture email"
-    );
+    // Fetch user details
+    const user = await User.findById(id).select("username profilePicture email");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "User not found"));
+    }
+
+    // Fetch posts by user ID and populate user details
+    const posts = await Post.find({ user: id })
 
     if (!posts || posts.length === 0) {
       return res
@@ -133,13 +139,16 @@ const getPostByUserId = asyncHandler(async (req, res) => {
         .json(new ApiResponse(404, null, "No posts found for this user"));
     }
 
+
     return res
       .status(200)
-      .json(new ApiResponse(200, posts, "Posts fetched successfully"));
+      .json(new ApiResponse(200, {user,posts}, "Posts fetched successfully"));
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 
 export { uploadPosts, getAllPosts, getPostByUserId };

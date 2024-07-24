@@ -8,6 +8,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import UpdatePassword from './pages/UpdatePassword.jsx';
 import Profile from './pages/Profile.jsx';
+import Follows from './pages/Follows.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -32,7 +33,12 @@ const router = createBrowserRouter([
       {
         path:'/user/:id',
         element:<Profile/>
+      },
+      {
+        path:'/follows/followers/:id',
+        element:<Follows/>
       }
+
     ],
   },
 ]);
