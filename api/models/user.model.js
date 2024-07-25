@@ -12,6 +12,10 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
+  profileName:{
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -23,22 +27,6 @@ const userSchema = new Schema({
   bio: {
     type: String,
     default: '',
-  },
-  followers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  following: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  posts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
   refreshToken: {
     type: String,

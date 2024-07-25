@@ -34,13 +34,13 @@ function Suggestion() {
                         <div className="w-18 h-18 rounded-full overflow-hidden">
                             <img
                                 src={user.profilePicture}
-                                alt={`${user.username}'s profile`}
+                                alt={`${user.profileName}`}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                     </Link>
                     <div>
-                        <h1 className="text-lg">{user.username}</h1>
+                        <h1 className="text-lg">{user.profileName}</h1>
                         <h3 className="text-sm">{user.email}</h3>
                     </div>
                     <div>
