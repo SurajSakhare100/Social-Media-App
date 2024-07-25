@@ -3,7 +3,7 @@ const url = "http://localhost:4000";
 const handleResponse = (res) => res.data.data;
 const handleError = (err) => {
   console.log(err.message);
-  return null;
+  return [];
 };
 const axiosInstance = axios.create({
   headers: {
@@ -152,6 +152,7 @@ export const getPostbyuserid = async (id) => {
       url + `/api/v1/post/getpostbyuserid/${id}`,
       { withCredentials: true }
     );
+    console.log(response)
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -208,9 +209,11 @@ export const createComment=async (userComment, postId, userId)=>{
   }
 }
 
-export const fetchFollowers = async (userId) => {
+
+// Fetch followers of a user
+export const getFollowers = async (userId) => {
   try {
-    const response = await axios.get(url+`/api/v1/follow/getFollowers/${userId}`, 
+    const response = await axios.get(`${url}/api/v1/follow/getFollowers/${userId}`, 
       { withCredentials: true },
     );
     return handleResponse(response);
@@ -219,13 +222,25 @@ export const fetchFollowers = async (userId) => {
   }
 };
 
-export const handleFollow = async (userId,followingId) => {
+// Fetch users followed by a user
+export const getFollowing = async (userId) => {
   try {
-    console.log(userId,followingId)
+    const response = await axios.get(`${url}/api/v1/follow/getFollowing/${userId}`, 
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+// Handle follow action
+export const follow = async (followerId, followingId) => {
+  try {
     const response = await axios.post(
-      url+'/api/v1/follow/handleFollow', {
-        user: userId,
-        following: followingId
+      `${url}/api/v1/follow/handleFollow`, {
+        followerId: followerId,
+        followingId: followingId
       },
       { withCredentials: true },
     );
@@ -234,13 +249,18 @@ export const handleFollow = async (userId,followingId) => {
     return handleError(error);
   }
 };
-export const handleUnfollow = async () => {
+
+// Handle unfollow action
+export const unfollow = async (followerId, followingId) => {
   try {
     const response = await axios.delete(
-      url+'/api/v1/follow/handleUnfollow', {
-        user: userId,
-        following: followingId},
-      { withCredentials: true },
+      `${url}/api/v1/follow/handleUnfollow`, {
+        data: {
+          followerId: followerId,
+          followingId: followingId
+        },
+        withCredentials: true,
+      }
     );
     return handleResponse(response);
   } catch (error) {
@@ -249,3 +269,37 @@ export const handleUnfollow = async () => {
 };
 
 
+// Count followers of a user
+export const countFollowers = async (userId) => {
+  try {
+    const response = await axios.get(`${url}/api/v1/follow/countFollowers/${userId}`, 
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+// Count users followed by a user
+export const countFollowing = async (userId) => {
+  try {
+    const response = await axios.get(`${url}/api/v1/follow/countFollowing/${userId}`, 
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+// Assuming you have an endpoint to get the list of users the current user is following
+export const getFollowingOfCurrentUser = async (userId) => {
+  try {
+    const response = await axios.get(`${url}/api/v1/follow/getFollowingOfCurrentUser/${userId}`,
+    { withCredentials: true });
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};

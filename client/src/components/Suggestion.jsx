@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllUser } from ".."; // Adjust the import path as per your project structure
 import { Link } from "react-router-dom";
+import FollowBtn from "./FollowBtn";
 
 function Suggestion() {
     const [users, setUsers] = useState(null);
@@ -12,13 +13,11 @@ function Suggestion() {
                 setUsers(data);
             } catch (error) {
                 console.error("Error fetching users:", error);
-                // Handle error state or retry logic if needed
             }
         };
 
         fetchData();
     }, []);
-
 
     return (
         <div>
@@ -44,9 +43,7 @@ function Suggestion() {
                         <h3 className="text-sm">{user.email}</h3>
                     </div>
                     <div>
-                        <button className="btn btn-primary">
-                            follow
-                        </button>
+                       <FollowBtn/>
                     </div>
                 </div>
             ))}

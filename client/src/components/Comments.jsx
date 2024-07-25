@@ -4,7 +4,6 @@ import { getAllComments, createComment } from "../index.js";
 function Comments({ postId, userId, userPicture }) {
   const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
-
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -22,7 +21,7 @@ function Comments({ postId, userId, userPicture }) {
   const handleComment = async (e) => {
     e.preventDefault();
     try {
-      await createComment({ comment: userComment, postId, userId });
+      await createComment(  userComment, postId, userId );
       setUserComment(""); // Clear the input field after submission
       const data = await getAllComments(postId); // Refresh comments after adding a new one
       setComments(data[0]?.comments || []);

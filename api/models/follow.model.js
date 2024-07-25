@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 
 const followsSchema = new mongoose.Schema({
-  user: {
+  followerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     index: true
   },
-  following: {
+  followingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -18,8 +18,7 @@ const followsSchema = new mongoose.Schema({
 });
 
 // Ensure a user cannot follow the same person more than once
-followsSchema.index({ user: 1, following: 1 }, { unique: true });
-
+followsSchema.index({ followerId: 1, followingId: 1 }, { unique: true });
 const Follow = mongoose.model('Follow', followsSchema);
 
 export default Follow;
