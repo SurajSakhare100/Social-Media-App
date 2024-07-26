@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "http://localhost:4000";
+const url = "http://localhost:5000";
 const handleResponse = (res) => res.data.data;
 const handleError = (err) => {
   console.log(err.message);
@@ -298,6 +298,22 @@ export const getFollowingOfCurrentUser = async (userId) => {
   try {
     const response = await axios.get(`${url}/api/v1/follow/getFollowingOfCurrentUser/${userId}`,
     { withCredentials: true });
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+
+// Handle follow action
+export const getChat = async (sender, receiver) => {
+  try {
+    const response = await axios.get(
+      `${url}/api/v1/chat/messages?sender=${sender}&receiver=${receiver}`, {
+        sender, receiver
+      },
+      { withCredentials: true },
+    );
     return handleResponse(response);
   } catch (error) {
     return handleError(error);

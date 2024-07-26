@@ -66,6 +66,7 @@ function Profile() {
                         <h1 className='w-120'>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad sapiente neque nesciunt repellat id mollitia facilis fugiat, eaque dolore commodi nam. Modi recusandae animi voluptate qui quia ratione, illo dolor?
                         </h1>
+                        <Link to={`/chat/${user?._id}`}><button className='btn btn-info'>Chat with me</button></Link>
                     </div>
                 </div>
                 <div>

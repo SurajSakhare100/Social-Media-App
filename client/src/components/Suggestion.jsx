@@ -1,49 +1,53 @@
 import React, { useEffect, useState } from "react";
-import { getAllUser } from ".."; // Adjust the import path as per your project structure
+import { getFollowers } from "../index.js"; // Adjust the import path as per your project structure
 import { Link } from "react-router-dom";
 import FollowBtn from "./FollowBtn";
+import { useSelector } from "react-redux";
 
 function Suggestion() {
-    const [users, setUsers] = useState(null);
-
+    const [follows, setFollows] = useState(null);
+    const user = useSelector((state) => state.user.userDetails); // Get current user details from Redux state
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchFollowsData = async () => {
             try {
-                const data = await getAllUser();
-                setUsers(data);
+                const data = await getFollowers(user?._id);
+                setFollows(data);
             } catch (error) {
-                console.error("Error fetching users:", error);
+                console.error(`Failed to fetch followers:`, error);
             }
         };
 
-        fetchData();
-    }, []);
-
+        fetchFollowsData();
+    }, [user]);
     return (
         <div>
             <h1 className="text-xl">You can also follow them</h1>
-            {users?.map((user) => (
-                <div key={user._id} className="flex items-center space-x-4 my-4" >
+            {follows?.map((follows) => (
+                <div key={follows.followerId._id} className="flex items-center space-x-4 my-4" >
                     <Link
                         tabIndex={0}
                         role="button"
                         className="btn btn-ghost btn-circle avatar"
-                        to={`/user/${user._id}`}
+                        to={`/user/${follows.followerId._id}`}
                     >
                         <div className="w-18 h-18 rounded-full overflow-hidden">
                             <img
-                                src={user.profilePicture}
-                                alt={`${user.profileName}`}
+                                src={follows.followerId.profilePicture}
+                                alt={`${follows.followerId.profileName}`}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                     </Link>
                     <div>
-                        <h1 className="text-lg">{user.profileName}</h1>
-                        <h3 className="text-sm">{user.email}</h3>
+                        <h1 className="text-lg">{follows.followerId.profileName}</h1>
+                        <h3 className="text-sm">{follows.followerId.email}</h3>
                     </div>
                     <div>
-                       <FollowBtn/>
+                        <FollowBtn
+                            followingId={follows.followerId._id }
+                            followerId={user._id}
+                            isFollowing={follows.isFollowing}
+                        />
                     </div>
                 </div>
             ))}

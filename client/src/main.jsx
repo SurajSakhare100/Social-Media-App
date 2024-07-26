@@ -9,6 +9,7 @@ import Register from './pages/Register.jsx';
 import UpdatePassword from './pages/UpdatePassword.jsx';
 import Profile from './pages/Profile.jsx';
 import Follows from './pages/Follows.jsx';
+import Chat from './pages/Chat.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/register',
         element: <Register />,
+      },
+      {
+        path: '/chat/:receiverId',
+        element: <Chat />,
       },
       {
         path: '/updatepassword',

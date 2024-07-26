@@ -109,7 +109,7 @@ const loginUser = asyncHandler(async (req, res) =>{
   if (!email) {
       throw new ApiError(400, "username or email is required")
   }
-  
+  console.log(email)
   const user = await User.findOne({
       email
   })
@@ -212,7 +212,7 @@ const getAllUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params; 
-    const user = await User.findById(id).select('username email profilePicture');
+    const user = await User.findById(id).select('username email profilePicture profileName');
 
     if (!user) {
       return res
