@@ -51,7 +51,25 @@ const uploadPosts = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
+
     const posts = await Post.aggregate([
+      // Lookup user details for each post
+      {
+        $lookup: {
+          from: "users",
+          localField: "user", // Assuming `user` is the field in Post schema that references the creator
+          foreignField: "_id",
+          as: "creatorDetails",
+        },
+      },
+      // Unwind creatorDetails to get individual user documents
+      {
+        $unwind: {
+          path: "$creatorDetails",
+          preserveNullAndEmptyArrays: true, // Preserve posts with no user details
+        },
+      },
+      // Lookup likes for each post
       {
         $lookup: {
           from: "likes",
@@ -60,62 +78,40 @@ const getAllPosts = asyncHandler(async (req, res) => {
           as: "likes",
         },
       },
-      {
-        $unwind: {
-          path: "$likes",
-          preserveNullAndEmptyArrays: true, 
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "likes.user",
-          foreignField: "_id",
-          as: "userDetails",
-        },
-      },
-      {
-        $unwind: {
-          path: "$userDetails",
-          preserveNullAndEmptyArrays: true, // Preserve likes with no user details
-        },
-      },
+      // Group by post ID to aggregate like count
       {
         $group: {
           _id: "$_id",
           content: { $first: "$content" },
           post_image: { $first: "$post_image" },
-          users: { $push: "$userDetails" },
+          creatorDetails: { $first: "$creatorDetails" },
           likeCount: { $sum: { $cond: [{ $ifNull: ["$likes", false] }, 1, 0] } },
+          liked: { $sum: { $cond: [{ $eq: ["$likes.user", userId] }, 1, 0] } }, // Check if the current user has liked the post
         },
       },
-      {
-        $addFields: {
-          liked: {
-            $in: [userId, "$users._id"],
-          },
-        },
-      },
+      // Project the final output fields
       {
         $project: {
           _id: 1,
           content: 1,
           post_image: 1,
-          users: 1,
+          creatorDetails: 1,
           likeCount: 1,
-          liked: 1,
+          liked: { $gt: ["$liked", 0] }, // Convert count to boolean
         },
       },
     ]);
 
     res.status(200).json(
-      new ApiResponse(200, posts, "Posts fetched successfully with user details")
+      new ApiResponse(200, posts, "Posts fetched successfully with creator details")
     );
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 
 const getPostByUserId = asyncHandler(async (req, res) => {
   try {
@@ -130,7 +126,7 @@ const getPostByUserId = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, {posts}, "Posts fetched successfully"));
+      .json(new ApiResponse(200, posts, "Posts fetched successfully"));
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal server error" });

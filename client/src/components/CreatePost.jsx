@@ -36,7 +36,7 @@ function CreatePost() {
             clipRule="evenodd" />
         </svg>
       </label>
-      <button className="btn" onClick={() => document.getElementById('my_modal_5').showModal()}>Create New Post</button>
+      <button className="btn btn-info" onClick={() => document.getElementById('my_modal_5').showModal()}>Create New Post</button>
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <div className="modal-action justify-center">

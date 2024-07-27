@@ -5,65 +5,73 @@ import FollowBtn from '../components/FollowBtn.jsx';
 import { useEffect, useState } from 'react';
 
 function Follows() {
-  const { id, type } = useParams(); // Extract `id` and `type` from URL parameters
-  const [follows, setFollows] = useState([]); // State to store follows data
-  const user = useSelector((state) => state.user.userDetails); // Get current user details from Redux state
+    const { id, type } = useParams();
+    const [follows, setFollows] = useState([]);
+    const user = useSelector((state) => state.user.userDetails);
 
-  useEffect(() => {
-    const fetchFollowsData = async () => {
-      try {
-        let data;
-        if (type === 'followers') {
-          data = await getFollowers(id); // Fetch followers if `type` is 'followers'
-        } else if (type === 'following') {
-          data = await getFollowing(id); // Fetch following if `type` is 'following'
-        } else {
-          console.error("Invalid type parameter");
-          return;
-        }
-        setFollows(data);
-      } catch (error) {
-        console.error(`Failed to fetch ${type}:`, error);
-      }
-    };
+    useEffect(() => {
+        const fetchFollowsData = async () => {
+            try {
+                let data;
+                if (type === 'followers') {
+                    data = await getFollowers(id);
+                } else if (type === 'following') {
+                    data = await getFollowing(id);
+                } else {
+                    console.error("Invalid type parameter");
+                    return;
+                }
+                setFollows(data);
+            } catch (error) {
+                console.error(`Failed to fetch ${type}:`, error);
+            }
+        };
 
-    fetchFollowsData();
-  }, [id, type]);
-  return (
-    <div>
-      <div className='w-full md:w-1/2 mx-auto'>
-        {follows.length > 0 ? follows.map((follow) => (
-          <div key={follow._id} className="w-full flex items-center justify-between space-x-4 my-4">
-            <div className='flex gap-4'>
-              <Link
-                className="btn btn-ghost btn-circle avatar"
-                to={`/user/${type === 'followers' ? follow.followerId._id : follow.followingId._id}`}
-              >
-                <div className="w-18 h-18 rounded-full overflow-hidden">
-                  <img
-                    src={type === 'followers' ? follow.followerId.profilePicture : follow.followingId.profilePicture}
-                    alt={`${type === 'followers' ? follow.followerId.username : follow.followingId.username}'s profile`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </Link>
-              <div>
-                <h1 className="text-lg">{type === 'followers' ? follow.followerId.username : follow.followingId.username}</h1>
-                <h3 className="text-sm">{type === 'followers' ? follow.followerId.email : follow.followingId.email}</h3>
-              </div>
+        fetchFollowsData();
+    }, [id, type]);
+
+    return (
+        <div className='flex flex-col items-center min-h-screen '>
+            <div className='w-full max-w-3xl bg-white px-2'>
+              
+              <h1 className={`text-xl md:text-2xl lg:text-4xl text-center rounded-lg font-semibold  my-2 py-2 ${type=="following"?"bg-accent":"bg-red-200"}`}>{`${user?.profileName}'s ${type}`}</h1>
+
+                {follows.length > 0 ? (
+                    follows.map((follow) => (
+                        <div key={follow._id} className="flex items-center justify-between p-4 border-b border-gray-200">
+                            <div className='flex items-center gap-4'>
+                                <Link
+                                    to={`/user/${type === 'followers' ? follow.followerId._id : follow.followingId._id}`}
+                                    className="flex-shrink-0"
+                                >
+                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-gray-300">
+                                        <img
+                                            src={type === 'followers' ? follow.followerId.profilePicture : follow.followingId.profilePicture}
+                                            alt={`${type === 'followers' ? follow.followerId.profileName : follow.followingId.profileName}'s profile`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </Link>
+                                <div>
+                                    <h1 className="text-base md:text-lg font-semibold">{type === 'followers' ? follow.followerId.profileName : follow.followingId.profileName}</h1>
+                                    <h3 className="text-sm text-gray-600">{type === 'followers' ? follow.followerId.username : follow.followingId.username}</h3>
+                                </div>
+                            </div>
+                            <div>
+                                <FollowBtn 
+                                    followingId={type === 'followers' ? follow.followerId._id : follow.followingId._id}
+                                    followerId={user._id}
+                                    isFollowing={follow.isFollowing} 
+                                />
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <h1 className='text-xl text-center py-6'>No {type} found</h1>
+                )}
             </div>
-            <div>
-              <FollowBtn 
-                followingId={type === 'followers' ? follow.followerId._id : follow.followingId._id}
-                followerId={user._id}
-                isFollowing={follow.isFollowing} 
-              />
-            </div>
-          </div>
-        )) : <h1 className='text-4xl text-center'>No {type} found</h1>}
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
 
 export default Follows;

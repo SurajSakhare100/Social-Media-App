@@ -212,7 +212,7 @@ const getAllUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params; 
-    const user = await User.findById(id).select('username email profilePicture profileName');
+    const user = await User.findById(id).select('username email profilePicture profileName bio');
 
     if (!user) {
       return res

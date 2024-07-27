@@ -52,7 +52,7 @@ const getFollowers = asyncHandler(async (req, res) => {
     const currentUserId = req.user._id; // Assuming you have user authentication and the current user ID is available
 
     const followers = await Follow.find({ followingId: userId })
-      .populate('followerId', 'username email profilePicture');
+      .populate('followerId', 'username email profilePicture profileName');
 
     const userFollowing = await Follow.find({ followerId: currentUserId }).select('followingId');
     const userFollowingIds = userFollowing.map(follow => follow.followingId.toString());

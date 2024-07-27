@@ -9,7 +9,8 @@ import Register from './pages/Register.jsx';
 import UpdatePassword from './pages/UpdatePassword.jsx';
 import Profile from './pages/Profile.jsx';
 import Follows from './pages/Follows.jsx';
-import Chat from './pages/Chat.jsx';
+import ChatBox from './pages/ChatBox.jsx';
+import ChatDashBoard from './pages/ChatDashBoard.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -29,7 +30,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/chat/:receiverId',
-        element: <Chat />,
+        element: <ChatBox />,
+      },
+      {
+        path: '/mychat/:user',
+        element: <ChatDashBoard />,
       },
       {
         path: '/updatepassword',

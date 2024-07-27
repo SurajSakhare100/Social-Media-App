@@ -21,9 +21,10 @@ function Suggestion() {
     }, [user]);
     return (
         <div>
-            <h1 className="text-xl">You can also follow them</h1>
+            <h1 className="text-xl font-semibold bg-slate-300 py-2 px-4 rounded-lg">You can also follow them</h1>
             {follows?.map((follows) => (
-                <div key={follows.followerId._id} className="flex items-center space-x-4 my-4" >
+                <div key={follows.followerId._id} className="flex items-center space-x-4 my-4 justify-between" >
+                    <div className="flex gap-2">
                     <Link
                         tabIndex={0}
                         role="button"
@@ -41,6 +42,7 @@ function Suggestion() {
                     <div>
                         <h1 className="text-lg">{follows.followerId.profileName}</h1>
                         <h3 className="text-sm">{follows.followerId.email}</h3>
+                    </div>
                     </div>
                     <div>
                         <FollowBtn

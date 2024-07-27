@@ -37,20 +37,16 @@ io.on('connection', (socket) => {
     const { sender, receiver, content } = message;
     const newMessage = { sender, receiver, content };
     
-    // Save the message to the database
     try {
-      await sendMessage(newMessage);
+      const receiverSocketId = users[receiver];
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit('receiveMessage', newMessage);
+      }
+
     } catch (err) {
       console.error('Error saving message:', err);
     }
 
-    // Send the message to the intended receiver only
-    const receiverSocketId = users[receiver];
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit('receiveMessage', newMessage);
-    }
-    
-    // Optionally, send a confirmation to the sender
     socket.emit('messageSent', newMessage);
   });
 

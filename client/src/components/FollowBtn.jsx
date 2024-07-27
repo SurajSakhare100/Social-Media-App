@@ -19,7 +19,7 @@ function FollowBtn({ followerId, followingId,isFollowing }) {
 
     return (
         <button
-            className={`btn ${isFollowing? 'btn-accent' : 'btn-info'}`}
+            className={`btn ${isFollowing? 'btn-info':"btn-success"}`}
             onClick={() => handlefollowUnfollowUser(followerId, followingId)}
             disabled={user._id === followingId}
         >

@@ -152,7 +152,6 @@ export const getPostbyuserid = async (id) => {
       url + `/api/v1/post/getpostbyuserid/${id}`,
       { withCredentials: true }
     );
-    console.log(response)
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -305,12 +304,40 @@ export const getFollowingOfCurrentUser = async (userId) => {
 };
 
 
-// Handle follow action
 export const getChat = async (sender, receiver) => {
   try {
     const response = await axios.get(
       `${url}/api/v1/chat/messages?sender=${sender}&receiver=${receiver}`, {
         sender, receiver
+      },
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+export const sendChat = async ({sender, receiver,content}) => {
+  try {
+    console.log(sender, receiver,content)
+    const response = await axios.post(
+      `${url}/api/v1/chat/send`, {
+        sender, receiver,content
+      },
+      { withCredentials: true },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+
+export const getChatUser = async (user) => {
+  try {
+    const response = await axios.get(
+      `${url}/api/v1/chat/getChatUser/${user}`, {
+        user
       },
       { withCredentials: true },
     );

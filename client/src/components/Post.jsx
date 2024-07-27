@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Comments from './Comments';
 import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js';
-import { FaCommentAlt, FaCut } from 'react-icons/fa';
+import { FaCommentAlt } from 'react-icons/fa';
+import Profile from "/profile.png";
+import { Link } from 'react-router-dom';
 
 function Post() {
     const [posts, setPosts] = useState([]);
@@ -75,7 +77,7 @@ function Post() {
             <dialog id="my_modal_1" className="modal px-2" >
                 <div className="modal-box w-fit ">
                     <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-ghost absolute right-6 top-4">✕</button>
+                        <button className="btn btn-sm btn-circle btn-warning absolute right-6 top-4">✕</button>
                         <figure className='w-fit h-80 md:h-[600px] rounded-lg'>
                             <img
                                 id='modelImg'
@@ -87,42 +89,56 @@ function Post() {
                 <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
             </dialog>
 
-            <div className="w-full card">
+            <div className="w-full">
                 {posts.map(post => (
-                    <div key={post._id} className="my-4">
-                        <div className="card-normal py-2">
-                            <h2 className="card-title">
-                                {post.content}
-                            </h2>
+                    <div key={post._id} className="my-4 p-4 border rounded-lg bg-white shadow-md">
+                        <Link
+                            to={`/user/${post.creatorDetails?._id}`}
+                            className="flex items-center mb-4"
+                        >
+                            <div className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden">
+                                <img
+                                    src={post.creatorDetails?.profilePicture || Profile}
+                                    alt={`${post.creatorDetails?.profileName}'s profile`}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div className="ml-4 flex-1">
+                                <h1 className="text-lg font-semibold">{post.creatorDetails?.profileName || "Profile name"}</h1>
+                                <h2 className="text-md text-gray-600">{post.creatorDetails?.username || "User name"}</h2>
+                            </div>
+                        </Link>
+                        <div className="py-2">
+                            <p className="text-gray-700">{post.content}</p>
                         </div>
                         {post.post_image && (
-                            <figure className='aspect-square'>
+                            <figure className='mb-4 aspect-square'>
                                 <img
                                     src={post.post_image}
                                     alt="Post"
-                                    className="rounded-lg w-full h-full object-cover object-center"
+                                    className="rounded-lg w-full h-full object-cover cursor-pointer"
                                     onDoubleClick={(e) => showPost(e)}
                                 />
                             </figure>
                         )}
-                        <div className="pt-2 flex items-center gap-4">
+                        <div className="flex items-center justify-start text-gray-600 gap-4">
                             <div
-                                className="flex gap-2 cursor-pointer"
+                                className="flex items-center cursor-pointer"
                                 onClick={() => handleLike(post._id)}
                             >
                                 {post.liked ? (
-                                    <AiFillLike className="text-red-400 text-2xl" />
+                                    <AiFillLike className="text-red-500 text-2xl" />
                                 ) : (
-                                    <AiOutlineLike className="text-2xl" />
+                                    <AiOutlineLike className="text-gray-500 text-2xl" />
                                 )}
-                                <span>{post.likeCount}</span>
+                                <span className="ml-2">{post.likeCount}</span>
                             </div>
                             <div
-                                className="flex gap-2 cursor-pointer"
+                                className="flex items-center cursor-pointer pt-1"
                                 onClick={() => toggleComments(post._id)}
                             >
-                                <FaCommentAlt className="text-xl mt-1" />
-                                <span>Comments</span>
+                                <FaCommentAlt className="text-gray-500 text-xl" />
+                                <span className="ml-2">Comments</span>
                             </div>
                         </div>
 
