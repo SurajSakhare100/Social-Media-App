@@ -5,10 +5,10 @@ import Suggestion from '../components/Suggestion';
 import { useSelector } from 'react-redux';
 import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
+import Story from '../components/Story';
 
 function Home() {
     const user = useSelector((state) => state.user.userDetails);
-    console.log(user)
     return (
         <div className='flex flex-col md:flex-row pt-6 px-4 md:px-20 gap-6 bg-[#F4F2EE]'>
 
@@ -29,7 +29,11 @@ function Home() {
                     </div>
                 </Link>
             </div>
+
             <div className='flex-1 md:px-20'>
+                <div className='my-4'>
+                    <Story/>
+                </div>
                 <div className='mb-6'>
                     <CreatePost />
                 </div>

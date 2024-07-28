@@ -40,7 +40,7 @@ function Navbar() {
     }, [dispatch, navigate]);
 
     return (
-        <div className="navbar  sticky top-0 z-10 h-16 w-full md:h-20 px-10 bg-white">
+        <div className="navbar sticky top-0 z-10 h-16 w-full md:h-20 px-10 bg-white">
             <div className="w-full h-full flex justify-between">
                 <Link to="/">
                     <img src={navLogo} alt="nav-logo" className="w-10 md:w-12" />
@@ -48,19 +48,17 @@ function Navbar() {
                 <div className="flex justify-between md:gap-10">
                     <div className="navbar-start flex items-center">
                         <div className="md:flex md:ml-4 md:w-80 w-60">
-                            <div className="w-full relative ">
+                            <div className="w-full relative">
                                 <input
                                     type="text"
                                     placeholder="Search"
                                     className={`input ${isSearchVisible ? '' : 'hidden'} md:block w-full md:w-80 h-8 md:h-10 border-1 border-black`}
                                 />
-                                <FaSearch className="absolute right-2 top-1/2 transform -translate-y-1/2" onClick={(p) => setIsSearchVisible(!p)} />
+                                <FaSearch className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={() => setIsSearchVisible(!isSearchVisible)} />
                             </div>
                         </div>
-
                     </div>
                     <div className="navbar-end flex items-center gap-4">
-                        {/* Desktop Chat Icon */}
                         <button className="btn btn-ghost btn-circle hidden md:block">
                             <Link to={`/mychat/${user?._id}`} className="indicator">
                                 <svg
@@ -80,7 +78,6 @@ function Navbar() {
                                 <span className="badge badge-xs badge-primary indicator-item"></span>
                             </Link>
                         </button>
-                        {/* User Dropdown Menu */}
                         <div className="dropdown dropdown-end">
                             <div
                                 tabIndex={0}
@@ -117,7 +114,6 @@ function Navbar() {
                                 )}
                             </ul>
                         </div>
-                        {/* Theme Toggle */}
                         <label className="swap swap-rotate hidden md:flex items-center">
                             <input type="checkbox" className="hidden" />
                             <svg
@@ -135,11 +131,9 @@ function Navbar() {
                                 <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
                             </svg>
                         </label>
-
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

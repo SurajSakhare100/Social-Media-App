@@ -18,7 +18,7 @@ function Suggestion() {
         };
 
         fetchFollowsData();
-    }, [user]);
+    }, [user,setFollows,FollowBtn]);
     return (
         <div>
             <h1 className="text-xl font-semibold bg-slate-300 py-2 px-4 rounded-lg">You can also follow them</h1>

@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { follow, unfollow } from '../index.js';
 
-function FollowBtn({ followerId, followingId,isFollowing }) {
+function FollowBtn({ followerId, followingId, initialIsFollowing }) {
     const user = useSelector((state) => state.user.userDetails);
-    const handlefollowUnfollowUser = async (followerId, followingId) => {
+    const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
+
+    const handlefollowUnfollowUser = async () => {
         try {
             let data;
-            if(!isFollowing){
-                 data = await follow(followerId, followingId);
-            }else{
-                 data = await unfollow(followerId, followingId);
+            if (!isFollowing) {
+                data = await follow(followerId, followingId);
+            } else {
+                data = await unfollow(followerId, followingId);
             }
+            setIsFollowing(!isFollowing); // Update the state locally
         } catch (error) {
             console.error("Failed to follow/unfollow user:", error);
         }
@@ -19,13 +22,13 @@ function FollowBtn({ followerId, followingId,isFollowing }) {
 
     return (
         <button
-            className={`btn ${isFollowing? 'btn-info':"btn-success"}`}
-            onClick={() => handlefollowUnfollowUser(followerId, followingId)}
+            className={`btn ${isFollowing ? 'btn-info' : "btn-success"}`}
+            onClick={handlefollowUnfollowUser}
             disabled={user._id === followingId}
         >
-            {isFollowing? 'Unfollow' : 'Follow'}
+            {isFollowing ? 'Unfollow' : 'Follow'}
         </button>
-    )
+    );
 }
 
-export default FollowBtn
+export default FollowBtn;

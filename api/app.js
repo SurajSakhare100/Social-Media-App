@@ -7,6 +7,7 @@ import likeRouter from './routes/like.route.js';
 import followRouter from './routes/follow.route.js';
 import commentRouter from './routes/comment.route.js';
 import chatRouter from './routes/chat.route.js';
+import storyRouter from './routes/story.route.js';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/v1/post', postRouter);
 app.use('/api/v1/like', likeRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/follow', followRouter);
+app.use('/api/v1/story', storyRouter);
 
 // Default route
 app.get('/', (req, res) => {
