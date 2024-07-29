@@ -5,11 +5,12 @@ import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import Post from "../models/posts.model.js";
 import User from "../models/user.model.js";
 
+// Create Post
 const uploadPosts = asyncHandler(async (req, res) => {
   try {
     const { content, tags } = req.body;
     if (!content) {
-      throw new ApiError(400, "content is required");
+      throw new ApiError(400, "Content is required");
     }
 
     const post_image = req.file?.path;
@@ -17,13 +18,11 @@ const uploadPosts = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Post image file is required");
     }
 
-    // Upload image to Cloudinary
     const post_image_on_cloudinary = await uploadOnCloudinary(post_image);
     if (!post_image_on_cloudinary) {
       throw new ApiError(400, "Failed to upload image");
     }
 
-    // Create new post
     const post = await Post.create({
       content,
       tags,
@@ -38,7 +37,7 @@ const uploadPosts = asyncHandler(async (req, res) => {
 
     return res
       .status(201)
-      .json(new ApiResponse(200, post, "Post added successfully"));
+      .json(new ApiResponse(201, post, "Post added successfully"));
   } catch (error) {
     console.error(error);
     if (error instanceof ApiError) {
@@ -48,28 +47,26 @@ const uploadPosts = asyncHandler(async (req, res) => {
   }
 });
 
+// Read All Posts
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
 
     const posts = await Post.aggregate([
-      // Lookup user details for each post
       {
         $lookup: {
           from: "users",
-          localField: "user", // Assuming `user` is the field in Post schema that references the creator
+          localField: "user",
           foreignField: "_id",
           as: "creatorDetails",
         },
       },
-      // Unwind creatorDetails to get individual user documents
       {
         $unwind: {
           path: "$creatorDetails",
-          preserveNullAndEmptyArrays: true, // Preserve posts with no user details
+          preserveNullAndEmptyArrays: true,
         },
       },
-      // Lookup likes for each post
       {
         $lookup: {
           from: "likes",
@@ -78,7 +75,6 @@ const getAllPosts = asyncHandler(async (req, res) => {
           as: "likes",
         },
       },
-      // Group by post ID to aggregate like count
       {
         $group: {
           _id: "$_id",
@@ -86,10 +82,9 @@ const getAllPosts = asyncHandler(async (req, res) => {
           post_image: { $first: "$post_image" },
           creatorDetails: { $first: "$creatorDetails" },
           likeCount: { $sum: { $cond: [{ $ifNull: ["$likes", false] }, 1, 0] } },
-          liked: { $sum: { $cond: [{ $eq: ["$likes.user", userId] }, 1, 0] } }, // Check if the current user has liked the post
+          liked: { $sum: { $cond: [{ $eq: ["$likes.user", userId] }, 1, 0] } },
         },
       },
-      // Project the final output fields
       {
         $project: {
           _id: 1,
@@ -97,7 +92,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
           post_image: 1,
           creatorDetails: 1,
           likeCount: 1,
-          liked: { $gt: ["$liked", 0] }, // Convert count to boolean
+          liked: { $gt: ["$liked", 0] },
         },
       },
     ]);
@@ -111,12 +106,11 @@ const getAllPosts = asyncHandler(async (req, res) => {
   }
 });
 
-
-
+// Read Posts by User ID
 const getPostByUserId = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const posts = await Post.find({ user: id })
+    const posts = await Post.find({ user: id });
 
     if (!posts || posts.length === 0) {
       return res
@@ -133,6 +127,73 @@ const getPostByUserId = asyncHandler(async (req, res) => {
   }
 });
 
+// Update Post
+const updatePost = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content, tags } = req.body;
 
+    const post = await Post.findById(id);
+    if (!post) {
+      throw new ApiError(404, "Post not found");
+    }
 
-export { uploadPosts, getAllPosts, getPostByUserId };
+    if (post.user.toString() !== req.user._id.toString()) {
+      throw new ApiError(403, "You are not authorized to update this post");
+    }
+
+    post.content = content || post.content;
+    post.tags = tags || post.tags;
+
+    if (req.file) {
+      const post_image = req.file.path;
+      const post_image_on_cloudinary = await uploadOnCloudinary(post_image);
+      if (!post_image_on_cloudinary) {
+        throw new ApiError(400, "Failed to upload image");
+      }
+      post.post_image = post_image_on_cloudinary.url;
+    }
+
+    await post.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, post, "Post updated successfully"));
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ApiError) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Delete Post
+const deletePost = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findById(id);
+    if (!post) {
+      throw new ApiError(404, "Post not found");
+    }
+
+    if (post.user.toString() !== req.user._id.toString()) {
+      throw new ApiError(403, "You are not authorized to delete this post");
+    }
+
+    await post.remove();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Post deleted successfully"));
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ApiError) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+export { uploadPosts, getAllPosts, getPostByUserId, updatePost, deletePost };
