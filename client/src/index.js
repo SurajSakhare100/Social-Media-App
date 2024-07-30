@@ -32,9 +32,37 @@ const getAllPosts = async () => {
   }
 };
 
-const getAllComments = async (postId) => {
+
+export const getAllComments = async (postId) => {
   try {
-    const response = await axiosInstance.get(`${url}/api/v1/comments/getallcomments/${postId}`);
+    const response = await axiosInstance.get(`/api/v1/comments/getallcomments/${postId}`);
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const createComment = async (userComment, postId, userId) => {
+  try {
+    const response = await axiosInstance.post('/api/v1/comments', { userComment, postId, userId });
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const updateComment = async (commentId, userComment) => {
+  try {
+    const response = await axiosInstance.put(`/api/v1/comments/${commentId}`, { userComment });
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const deleteComment = async (commentId) => {
+  try {
+    const response = await axiosInstance.delete(`/api/v1/comments/${commentId}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -82,14 +110,7 @@ const unlikePost = async (postId, userId) => {
   }
 };
 
-const createComment = async (userComment, postId, userId) => {
-  try {
-    const response = await axiosInstance.post(`${url}/api/v1/comments/createComment`, { userComment, postId, userId });
-    return handleResponse(response);
-  } catch (error) {
-    return handleError(error);
-  }
-};
+
 
 // User-related functions
 const registerUser = async (user) => {
@@ -106,12 +127,19 @@ const registerUser = async (user) => {
   }
 };
 
-const loginUser = async (user) => {
+
+const loginUser = async ({ email, password }) => {
   try {
-    const response = await axios.post(`${url}/api/v1/user/loginUser`, user);
-    return handleResponse(response);
+    const response = await axios.post(`${url}/api/v1/user/loginUser`, {
+       email, password 
+    }, {
+      withCredentials: true
+    });
+
+    console.log('Login successful:', response.data);
+    return response.data;
   } catch (error) {
-    return handleError(error);
+    console.log('Error logging in:', error);
   }
 };
 
@@ -123,11 +151,12 @@ const logoutUser = async () => {
     return handleError(error);
   }
 };
-
 const getCurrentUser = async () => {
   try {
-    const response = await axiosInstance.get(`${url}/api/v1/user/getuser`);
-    return handleResponse(response);
+    const response = await axios.get(`${url}/api/v1/user/getuser`, {
+      withCredentials: true,
+    });
+    return response
   } catch (error) {
     return handleError(error);
   }
@@ -259,12 +288,10 @@ const getChatUser = async (user) => {
 
 export {
   getAllPosts,
-  getAllComments,
   uploadPost,
   getPostByUserId,
   likePost,
   unlikePost,
-  createComment,
   registerUser,
   loginUser,
   logoutUser,

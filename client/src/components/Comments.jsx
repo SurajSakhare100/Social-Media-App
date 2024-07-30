@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getAllComments, createComment } from "../index.js";
+import { getAllComments, createComment, updateComment, deleteComment } from "../index.js";
 
 function Comments({ postId, userId, userPicture }) {
   const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingComment, setEditingComment] = useState("");
+
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -21,13 +24,34 @@ function Comments({ postId, userId, userPicture }) {
   const handleComment = async (e) => {
     e.preventDefault();
     try {
-      await createComment(  userComment, postId, userId );
-      setUserComment(""); // Clear the input field after submission
-      const data = await getAllComments(postId); // Refresh comments after adding a new one
+      if (editingCommentId) {
+        await updateComment(editingCommentId, editingComment);
+        setEditingCommentId(null);
+        setEditingComment("");
+      } else {
+        await createComment(userComment, postId, userId);
+        setUserComment(""); // Clear the input field after submission
+      }
+      const data = await getAllComments(postId); // Refresh comments after adding/updating
       setComments(data[0]?.comments || []);
     } catch (error) {
-      console.error("Error creating comment:", error);
+      console.error("Error creating/updating comment:", error);
     }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+      const data = await getAllComments(postId); // Refresh comments after deleting
+      setComments(data[0]?.comments || []);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const startEditing = (commentId, comment) => {
+    setEditingCommentId(commentId);
+    setEditingComment(comment);
   };
 
   return (
@@ -37,9 +61,7 @@ function Comments({ postId, userId, userPicture }) {
           comments.map((comment) => (
             <div
               key={comment._id}
-              className={`flex gap-2 ${
-                comment.author === userId ? "self-end" : ""
-              }`}
+              className={`flex gap-2 ${comment.author === userId ? "self-end" : ""}`}
             >
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
@@ -49,6 +71,12 @@ function Comments({ postId, userId, userPicture }) {
               <div className="chat-bubble">
                 {comment.comment}
               </div>
+              {comment.author === userId && (
+                <div className="flex gap-2">
+                  <button onClick={() => startEditing(comment._id, comment.comment)}>Edit</button>
+                  <button onClick={() => handleDeleteComment(comment._id)}>Delete</button>
+                </div>
+              )}
             </div>
           ))
         ) : (
@@ -71,10 +99,13 @@ function Comments({ postId, userId, userPicture }) {
               name="comment"
               type="text"
               placeholder="Comment your thought"
-              value={userComment}
-              onChange={(e) => setUserComment(e.target.value)}
+              value={editingCommentId ? editingComment : userComment}
+              onChange={(e) => editingCommentId ? setEditingComment(e.target.value) : setUserComment(e.target.value)}
               className="pl-2 block w-full rounded-md border-0 py-2 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
             />
+            <button type="submit">
+              {editingCommentId ? "Update Comment" : "Add Comment"}
+            </button>
           </form>
         </div>
       </div>

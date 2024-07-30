@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getCurrentUser, logoutUser } from "..";
-import Profile from "/profile.png";
 import { Link, useNavigate } from "react-router-dom";
-import navLogo from '../../public/nav-logo.webp';
 import { FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setActive, setInactive, userDetails } from "../../app/features/user/userSlice";
+import { fetchCurrentUser, logout } from "../app/features/user/userSlice.js";
+import Profile from "/profile.png";
+import navLogo from '../../public/nav-logo.webp';
 
 function Navbar() {
-    const [user, setUser] = useState(null);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const isUser = useSelector((state) => state.user);
 
-    const logoutuser = async () => {
-        const data = await logoutUser();
-        if (data) {
-            dispatch(userDetails(null));
-            dispatch(setInactive());
+    const user = useSelector((state) => state.user.user?.data.data);
+    const logoutUser = async () => {
+        const resultAction = await dispatch(logout());
+        if (logout.fulfilled.match(resultAction)) {
             navigate('/');
         } else {
             navigate('/login');
@@ -27,18 +23,11 @@ function Navbar() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getCurrentUser();
-            if (!data) {
-                navigate('/login');
-            } else {
-                setUser(data);
-                dispatch(userDetails(data));
-                dispatch(setActive());
-            }
+          const data=  await dispatch(fetchCurrentUser());
+        
         };
         fetchData();
-    }, [dispatch, navigate]);
-
+    }, [dispatch]);
     return (
         <div className="navbar sticky top-0 z-10 h-16 w-full md:h-20 px-10 bg-white">
             <div className="w-full h-full flex justify-between">
@@ -98,12 +87,15 @@ function Navbar() {
                                 {user ? (
                                     <>
                                         <li>
+                                            <Link to={`/login`}>login</Link>
+                                        </li>
+                                        <li>
                                             <Link to={`/user/${user._id}`}>Profile</Link>
                                         </li>
                                         <li>
                                             <Link to={`/mychat/${user._id}`}>Chat</Link>
                                         </li>
-                                        <li className="cursor-pointer" onClick={logoutuser}>
+                                        <li className="cursor-pointer" onClick={logoutUser}>
                                             <span>Logout</span>
                                         </li>
                                     </>

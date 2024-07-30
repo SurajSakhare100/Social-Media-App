@@ -1,15 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from '..';
+import { useDispatch } from 'react-redux';
+import { login } from '../app/features/user/userSlice.js'; // Adjust the import based on your file structure
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
-    const handleSubmit=async(e)=>{
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const data=await loginUser({email,password});
+        const data = await dispatch(login({ email, password })).unwrap();
+        if (data) {
+            navigate('/');
+        } else {
+            // Handle login failure (e.g., show an error message)
+        }
     }
+
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -75,7 +84,7 @@ function Login() {
                     </form>
 
                     <p className="mt-10 text-center text-sm text-gray-500">
-                       Not Register yet ? {' '}
+                       Not Registered yet?{' '}
                         <Link to={"/register"} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                         Register
                         </Link>
@@ -86,4 +95,4 @@ function Login() {
     )
 }
 
-export default Login
+export default Login;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { countFollowers, countFollowing, getPostbyuserid, getUserById } from '../index.js';
+import { countFollowers, countFollowing, getPostByUserId, getUserById } from '../index.js';
 import { Link, useParams } from 'react-router-dom';
 import profile from "/profile.png";
 
@@ -12,7 +12,7 @@ function Profile() {
     useEffect(() => {
         const fetchPostsData = async () => {
             try {
-                const post = await getPostbyuserid(id);
+                const post = await getPostByUserId(id);
                 const user = await getUserById(id);
                 setPosts(post);
                 setUser(user);

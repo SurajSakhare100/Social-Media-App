@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 function Follows() {
     const { id, type } = useParams();
     const [follows, setFollows] = useState([]);
-    const user = useSelector((state) => state.user.userDetails);
+    const user = useSelector((state) => state.user.user?.data.data);
 
     useEffect(() => {
         const fetchFollowsData = async () => {

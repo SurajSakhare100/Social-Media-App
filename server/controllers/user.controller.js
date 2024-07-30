@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import { options } from "../utils/constant.js";
+import jwt  from "jsonwebtoken";
 const registerUser = asyncHandler(async (req, res) => {
   try {
     // get user details from frontend
@@ -96,60 +97,53 @@ const generateAccessAndRefreshTokens = async (userId) => {
     );
   }
 };
-const loginUser = asyncHandler(async (req, res) =>{
-  // req body -> data
-  // username or email
-  //find the user
-  //password check
-  //access and referesh token
-  //send cookie
 
-  const {email, password} = req.body
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
   if (!email) {
-      throw new ApiError(400, "username or email is required")
+    throw new ApiError(400, "Username or email is required");
   }
-  console.log(email)
-  const user = await User.findOne({
-      email
-  })
 
+  const user = await User.findOne({ email });
   if (!user) {
-      throw new ApiError(404, "User does not exist")
+    throw new ApiError(404, "User does not exist");
   }
 
-//  const isPasswordValid = await user.isPasswordCorrect(password)
+  // Uncomment and use appropriate method for password validation
+  // const isPasswordValid = await user.isPasswordCorrect(password);
+  // if (!isPasswordValid) {
+  //   throw new ApiError(401, "Invalid user credentials");
+  // }
 
-//  if (!isPasswordValid) {
-//   throw new ApiError(401, "Invalid user credentials")
-//   }
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
- const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
-
-  const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+  const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
   const options = {
     httpOnly: true,
-    secure: true, // Make sure to set this in production with HTTPS
-    sameSite: 'strict'
-  }
+    secure: process.env.NODE_ENV === 'production', // Ensure secure is only true in production
+    sameSite: "strict",
+  };
 
   return res
-  .status(200)
-  .cookie("accessToken", accessToken,options)
-  .cookie("refreshToken", refreshToken, options)
-  .json(
-      new ApiResponse(
-          200, 
-          {
-              user: loggedInUser, accessToken, refreshToken
-          },
-          "User logged In Successfully"
-      )
-  )
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User logged in successfully"));
+});
 
-})
-
+const getCurrentUser = asyncHandler(async (req, res) => {
+  try {
+    const user = req.user;
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "User fetched successfully"));
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
@@ -188,16 +182,10 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
-const getCurrentUser = asyncHandler(async (req, res) => {
-  const user=req.user;
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "User fetched successfully"));
-});
 
 const getAllUser = asyncHandler(async (req, res) => {
   try {
-    const users = await User.find({}).select('-password -refreshToken');
+    const users = await User.find({}).select("-password -refreshToken");
 
     return res
       .status(200)
@@ -208,16 +196,15 @@ const getAllUser = asyncHandler(async (req, res) => {
   }
 });
 
-
 const getUserById = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.params; 
-    const user = await User.findById(id).select('username email profilePicture profileName bio');
+    const { id } = req.params;
+    const user = await User.findById(id).select(
+      "username email profilePicture profileName bio"
+    );
 
     if (!user) {
-      return res
-        .status(404)
-        .json(new ApiResponse(404, null, "User not found"));
+      return res.status(404).json(new ApiResponse(404, null, "User not found"));
     }
 
     return res
@@ -229,8 +216,6 @@ const getUserById = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 export {
   registerUser,
   loginUser,
@@ -238,5 +223,6 @@ export {
   logoutUser,
   getCurrentUser,
   changeCurrentPassword,
-  getUserById,getAllUser,
+  getUserById,
+  getAllUser,
 };

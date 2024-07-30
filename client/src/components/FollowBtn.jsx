@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { follow, unfollow } from '../index.js';
 
 function FollowBtn({ followerId, followingId, initialIsFollowing }) {
-    const user = useSelector((state) => state.user.userDetails);
+    const user = useSelector((state) => state.user.user?.data.data);
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
 
     const handlefollowUnfollowUser = async () => {
