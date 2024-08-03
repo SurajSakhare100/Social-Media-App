@@ -1,48 +1,32 @@
-import React, { useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
-import Profile from "/profile.png";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function Story() {
-    const [story, setStory] = useState(null);
-    const [preview, setPreview] = useState(null);
+const Story = () => {
+  const [stories, setStories] = useState([]);
 
-    const handleStoryChange = (e) => {
-        const file = e.target.files[0];
-        setStory(file);
-        setPreview(URL.createObjectURL(file));
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get('/api/stories');
+        setStories(response.data.stories);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      }
     };
 
-    return (
-        <div className='flex gap-4'>
-            <div className='w-20 h-20 rounded-full bg-slate-300 flex items-center justify-center'>
-                <label className="label cursor-pointer" htmlFor='storyInp'>
-                    <FaPlus className='text-2xl' />
-                </label>
-                <input 
-                    type="file" 
-                    id='storyInp' 
-                    onChange={handleStoryChange} 
-                    className="file-input file-input-bordered w-full max-w-xs hidden" 
-                />
-            </div>
-            {preview && (
-                <div className='w-20 h-20 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden'>
-                    <img src={preview} alt="story preview" className='object-center object-cover' />
-                </div>
-            )}
-            <div className='flex gap-4'>
-                <div className='w-20 h-20 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden'>
-                    <img src={Profile} alt="profile" className='object-center object-cover' />
-                </div>
-                <div className='w-20 h-20 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden'>
-                    <img src={Profile} alt="profile" className='object-center object-cover' />
-                </div>
-                <div className='w-20 h-20 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden'>
-                    <img src={Profile} alt="profile" className='object-center object-cover' />
-                </div>
-            </div>
+    fetchStories();
+  }, []);
+
+  return (
+    <div>
+      {stories.map((story) => (
+        <div key={story._id}>
+          <img src={story.mediaUrl} alt="Story" />
+          <p>Expires at: {new Date(story.expirationTime).toLocaleString()}</p>
         </div>
-    );
-}
+      ))}
+    </div>
+  );
+};
 
 export default Story;
