@@ -49,6 +49,7 @@ const removeFollow = asyncHandler(async (req, res) => {
 const getFollowers = asyncHandler(async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(userId)
     const currentUserId = req.user._id; // Assuming you have user authentication and the current user ID is available
 
     const followers = await Follow.find({ followingId: userId })

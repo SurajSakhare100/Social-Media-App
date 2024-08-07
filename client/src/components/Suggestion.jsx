@@ -2,11 +2,24 @@ import React, { useEffect, useState } from "react";
 import { getFollowers } from "../index.js"; // Adjust the import path as per your project structure
 import { Link } from "react-router-dom";
 import FollowBtn from "./FollowBtn";
-import { useSelector } from "react-redux";
+import { getCurrentUser } from '../index.js';
 
 function Suggestion() {
     const [follows, setFollows] = useState(null);
-    const user = useSelector((state) => state.user.userDetails); // Get current user details from Redux state
+    const [user, setUser] = useState(null);
+ 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
     useEffect(() => {
         const fetchFollowsData = async () => {
             try {

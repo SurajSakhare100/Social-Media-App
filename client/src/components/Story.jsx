@@ -14,7 +14,7 @@ const Story = () => {
       }
     };
 
-    fetchStories();
+    // fetchStories();
   }, []);
 
   return (

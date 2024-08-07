@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CreatePost from '../components/CreatePost';
 import Post from '../components/Post';
 import Suggestion from '../components/Suggestion';
-import { useSelector } from 'react-redux';
 import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
 import Story from '../components/Story';
+import { getCurrentUser } from '../index.js';
 
 function Home() {
-    const user = useSelector((state) => state.user.userDetails);
+    const [user, setUser] = useState(null);
+ 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
     return (
         <div className='flex flex-col md:flex-row pt-6 px-4 md:px-20 gap-6 bg-[#F4F2EE]'>
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:5000";
+const url = "http://localhost:3000";
 const handleResponse = (res) => res.data.data;
 const handleError = (err) => {
   console.log(err.message);
@@ -72,7 +72,7 @@ export const deleteComment = async (commentId) => {
 const uploadPost = async (post) => {
   try {
     const formData = createFormData(post);
-    const response = await axios.post(`${url}/api/v1/post/uploadpost`, formData, {
+    const response = await axiosInstance.post(`${url}/api/v1/post/uploadpost`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -116,7 +116,7 @@ const unlikePost = async (postId, userId) => {
 const registerUser = async (user) => {
   try {
     const formData = createFormData(user);
-    const response = await axios.post(`${url}/api/v1/user/registerUser`, formData, {
+    const response = await axiosInstance.post(`${url}/api/v1/user/registerUser`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -130,22 +130,22 @@ const registerUser = async (user) => {
 
 const loginUser = async ({ email, password }) => {
   try {
-    const response = await axios.post(`${url}/api/v1/user/loginUser`, {
+    const response = await axiosInstance.post(`${url}/api/v1/user/loginUser`, {
        email, password 
     }, {
       withCredentials: true
     });
 
-    console.log('Login successful:', response.data);
-    return response.data;
+    return handleResponse(response);
   } catch (error) {
-    console.log('Error logging in:', error);
+    console.log('Error logging in:', error.message);
   }
 };
 
 const logoutUser = async () => {
   try {
-    const response = await axios.post(`${url}/api/v1/user/logout`, {});
+    const response = await axiosInstance.post(`${url}/api/v1/user/logout`, {});
+
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -153,10 +153,10 @@ const logoutUser = async () => {
 };
 const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${url}/api/v1/user/getuser`, {
+    const response = await axiosInstance.get(`${url}/api/v1/user/getuser`, {
       withCredentials: true,
     });
-    return response
+    return handleResponse(response);
   } catch (error) {
     return handleError(error);
   }

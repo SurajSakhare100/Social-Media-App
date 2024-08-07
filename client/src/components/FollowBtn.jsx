@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { getCurrentUser } from '../index.js';
+
 import { follow, unfollow } from '../index.js';
 
 function FollowBtn({ followerId, followingId, initialIsFollowing }) {
-    const user = useSelector((state) => state.user.user?.data.data);
+    const [user, setUser] = useState(null);
+ 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
 
     const handlefollowUnfollowUser = async () => {
@@ -24,7 +38,7 @@ function FollowBtn({ followerId, followingId, initialIsFollowing }) {
         <button
             className={`btn ${isFollowing ? 'btn-info' : "btn-success"}`}
             onClick={handlefollowUnfollowUser}
-            disabled={user._id === followingId}
+            disabled={user?._id === followingId}
         >
             {isFollowing ? 'Unfollow' : 'Follow'}
         </button>

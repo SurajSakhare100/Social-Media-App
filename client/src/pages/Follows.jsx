@@ -3,11 +3,25 @@ import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import FollowBtn from '../components/FollowBtn.jsx';
 import { useEffect, useState } from 'react';
+import { getCurrentUser } from '../index.js';
 
 function Follows() {
     const { id, type } = useParams();
     const [follows, setFollows] = useState([]);
-    const user = useSelector((state) => state.user.user?.data.data);
+    const [user, setUser] = useState(null);
+ 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     useEffect(() => {
         const fetchFollowsData = async () => {
@@ -60,7 +74,7 @@ function Follows() {
                             <div>
                                 <FollowBtn 
                                     followingId={type === 'followers' ? follow.followerId._id : follow.followingId._id}
-                                    followerId={user._id}
+                                    followerId={user?._id}
                                     isFollowing={follow.isFollowing} 
                                 />
                             </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
-import { getChat, getUserById, sendChat } from '../index.js';
+import { getChat, getCurrentUser, getUserById, sendChat } from '../index.js';
 import Chat from '../components/Chat.jsx';
 
 const socket = io('http://localhost:5000');
@@ -12,7 +12,20 @@ const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [receiver, setReceiver] = useState(null);
   const { receiverId } = useParams();
-  const userId = useSelector((state) => state.user.userDetails?._id);
+  const [userId, setUserId] = useState(null);
+ 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUserId(userData._id);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
 
   useEffect(() => {
     const fetchReceiverData = async () => {

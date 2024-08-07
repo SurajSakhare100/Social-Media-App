@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCurrentUser, logout } from "../app/features/user/userSlice.js";
 import Profile from "/profile.png";
 import navLogo from '../../public/nav-logo.webp';
+import { getCurrentUser } from "../index.js";
 
 function Navbar() {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [user,setUser]=useState(null)
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
+        };
 
-    const user = useSelector((state) => state.user.user?.data.data);
+        fetchUser();
+    }, []);
     const logoutUser = async () => {
-        const resultAction = await dispatch(logout());
-        if (logout.fulfilled.match(resultAction)) {
+        try {
             navigate('/');
-        } else {
-            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
         }
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-          const data=  await dispatch(fetchCurrentUser());
-        
-        };
-        fetchData();
-    }, [dispatch]);
     return (
         <div className="navbar sticky top-0 z-10 h-16 w-full md:h-20 px-10 bg-white">
             <div className="w-full h-full flex justify-between">
@@ -86,9 +86,6 @@ function Navbar() {
                             >
                                 {user ? (
                                     <>
-                                        <li>
-                                            <Link to={`/login`}>login</Link>
-                                        </li>
                                         <li>
                                             <Link to={`/user/${user._id}`}>Profile</Link>
                                         </li>
