@@ -77,7 +77,7 @@ function Post() {
             <dialog id="my_modal_1" className="modal px-2" >
                 <div className="modal-box w-fit ">
                     <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-warning absolute right-6 top-4">✕</button>
+                        <button className="btn btn-sm btn-circle btn-info absolute right-6 top-4">✕</button>
                         <figure className='w-fit h-80 md:h-[600px] rounded-lg'>
                             <img
                                 id='modelImg'
@@ -89,9 +89,9 @@ function Post() {
                 <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
             </dialog>
 
-            <div className="w-full">
+            <div className="w-full ">
                 {posts.map(post => (
-                    <div key={post._id} className="my-4 p-4 border rounded-lg bg-white shadow-md">
+                    <div key={post._id} className="my-4 p-4 border rounded-lg dark:bg-black dark:text-white dark:text-pretty shadow-md">
                         <Link
                             to={`/user/${post.creatorDetails?._id}`}
                             className="flex items-center mb-4"

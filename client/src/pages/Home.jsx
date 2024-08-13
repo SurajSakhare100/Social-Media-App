@@ -23,11 +23,11 @@ function Home() {
         fetchUser();
     }, []);
     return (
-        <div className='flex flex-col md:flex-row pt-6 px-4 md:px-20 gap-6 bg-[#F4F2EE]'>
+        <div className='w-full h-full pt-20 pb-10 md:pt-24 overflow-y-auto flex flex-col md:flex-row  px-4 md:px-20 gap-6 bg-[#F4F2EE] dark:bg-black dark:text-white' >
 
-            <div className='hidden md:block w-full md:w-1/4 '>
+            <div className='hidden md:block w-fit '>
                 <Link to={`user/${user?._id}`} className='flex flex-col gap-4 md:flex-row items-center justify-center bg-white p-6 border-b rounded-xl border-gray-200 shadow-md'>
-                    <div className='flex-shrink-0 flex flex-col justify-center'>
+                    <div className='flex-shrink-0 flex flex-col justify-center items-center'>
                         <div className='w-36 h-36 md:w-40 md:h-40 lg:w-56 lg:h-56  '>
                             <img
                                 src={user?.profilePicture || Profile}

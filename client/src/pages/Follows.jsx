@@ -45,8 +45,8 @@ function Follows() {
     }, [id, type]);
 
     return (
-        <div className='flex flex-col items-center min-h-screen '>
-            <div className='w-full max-w-3xl bg-white px-2'>
+        <div className='w-full h-full overflow-y-auto flex flex-col items-center px-4 pt-24 bg-[#F4F2EE]'>
+            <div className='w-full max-w-3xl '>
               
               <h1 className={`text-xl md:text-2xl lg:text-4xl text-center rounded-lg font-semibold  my-2 py-2 ${type=="following"?"bg-accent":"bg-red-200"}`}>{`${user?.profileName}'s ${type}`}</h1>
 

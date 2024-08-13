@@ -102,7 +102,7 @@ const ChatBox = () => {
   };
 
   return (
-    <div className="flex flex-col h-[88vh]">
+    <div className="flex flex-col h-full w-full bg-[#F4F2EE] pt-16 md:pt-20">
       <div className="flex items-center bg-green-600 text-white py-4 px-6 shadow-md">
         <div className="flex-shrink-0">
           <div className="w-12 h-12 rounded-full overflow-hidden">
@@ -118,7 +118,7 @@ const ChatBox = () => {
           <h3 className="text-sm">{receiver?.email}</h3>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+      <div className="flex-1 overflow-y-auto p-4 bg-[#F4F2EE]">
         {messages.map((msg, index) => (
           <Chat key={index} msg={msg} userId={userId} />
         ))}

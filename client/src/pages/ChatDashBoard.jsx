@@ -17,9 +17,8 @@ function ChatDashBoard() {
         }
         fetchData();
     }, [user]);
-
     return (
-        <div className="h-screen bg-gray-100">
+        <div className="h-full pt-20 md:pt-24 bg-[#F4F2EE]">
             <div className="flex flex-col p-4">
                 {chats.length > 0 ? (
                     chats.map((chat) => (
@@ -40,6 +39,13 @@ function ChatDashBoard() {
                             <div className="ml-4 flex-1">
                                 <h1 className="text-lg font-semibold">{chat.userDetails?.profileName}</h1>
                                 <p className="text-gray-600">{chat.lastMessage?.content}</p>
+                            </div>
+                            <div>
+                            <p>
+  <strong>{new Date(chat.lastMessage?.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong> 
+  {` ${new Date(chat.lastMessage?.updatedAt).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}`}
+</p>
+
                             </div>
                         </Link>
                     ))

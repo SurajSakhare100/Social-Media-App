@@ -14,12 +14,12 @@ const Story = () => {
       }
     };
 
-    // fetchStories();
+    fetchStories();
   }, []);
 
   return (
     <div>
-      {stories.map((story) => (
+      {stories?.map((story) => (
         <div key={story._id}>
           <img src={story.mediaUrl} alt="Story" />
           <p>Expires at: {new Date(story.expirationTime).toLocaleString()}</p>

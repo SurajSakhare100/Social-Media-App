@@ -84,26 +84,26 @@ function Comments({ postId, userId, userPicture }) {
         )}
       </div>
 
-      <div className="flex gap-2 w-full mt-4">
-        <div className="w-12 h-12 rounded-full overflow-hidden">
+      <div className="flex gap-2 w-full mt-4 items-center">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
           <img
             src={userPicture}
             alt="User"
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="mt-2 flex-grow">
-          <form onSubmit={handleComment}>
+        <div className="mt-2 flex flex-row items-center justify-center flex-shrink">
+          <form onSubmit={handleComment} className="w-full flex gap-2">
             <input
               id="comment"
               name="comment"
               type="text"
-              placeholder="Comment your thought"
+              placeholder="Comment your thoughts.."
               value={editingCommentId ? editingComment : userComment}
               onChange={(e) => editingCommentId ? setEditingComment(e.target.value) : setUserComment(e.target.value)}
-              className="pl-2 block w-full rounded-md border-0 py-2 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+              className="pl-2 rounded-md border-0 text-sm md:py-2 w-42 md:w-fit text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
             />
-            <button type="submit">
+            <button type="submit" className="btn flex-shrink btn-primary">
               {editingCommentId ? "Update Comment" : "Add Comment"}
             </button>
           </form>
