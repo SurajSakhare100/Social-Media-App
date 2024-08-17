@@ -8,8 +8,12 @@ const connectDB = async () => {
         const dbURI = `${process.env.MONGODB_URL}/${DB_NAME}?ssl=true`;
 
         console.log(`Connecting to MongoDB at ${dbURI}`);
-        const connectionInstance = await mongoose.connect(dbURI);
-        console.log(`MongoDB connected! DB HOST: ${connectionInstance.connection.host}`);
+        const connectionInstance = await mongoose.connect(dbURI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            tls: true,
+            tlsInsecure: true, // Disable certificate validation (not recommended in production)
+        });
     } catch (error) {
         console.error("MongoDB connection FAILED", error);
         process.exit(1);
