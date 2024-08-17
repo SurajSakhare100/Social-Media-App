@@ -9,8 +9,7 @@ const connectDB = async () => {
 
         console.log(`Connecting to MongoDB at ${dbURI}`);
         const connectionInstance = await mongoose.connect(dbURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+          
             tls: true,
             tlsInsecure: true, // Disable certificate validation (not recommended in production)
         });
