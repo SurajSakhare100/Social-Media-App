@@ -8,8 +8,6 @@ const connectDB = async () => {
         const dbURI = `${process.env.MONGODB_URL}/${DB_NAME}`;
         console.log(`Connecting to MongoDB at ${dbURI}`);
         const connectionInstance = await mongoose.connect(dbURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000, // Adjust as needed
             socketTimeoutMS: 45000, // Adjust as needed
         });
