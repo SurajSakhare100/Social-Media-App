@@ -111,11 +111,10 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User does not exist");
   }
 
-  // Uncomment and use appropriate method for password validation
-  // const isPasswordValid = await user.isPasswordCorrect(password);
-  // if (!isPasswordValid) {
-  //   throw new ApiError(401, "Invalid user credentials");
-  // }
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials");
+  }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
@@ -123,7 +122,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Ensure secure is only true in production
+    secure:true, 
     sameSite: "strict",
   };
 

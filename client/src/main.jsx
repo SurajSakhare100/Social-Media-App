@@ -11,6 +11,18 @@ import Profile from './pages/Profile.jsx';
 import Follows from './pages/Follows.jsx';
 import ChatBox from './pages/ChatBox.jsx';
 import ChatDashBoard from './pages/ChatDashBoard.jsx';
+import GoogleLogin from './components/GoogleLogin.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import EmailVerificationForm from './pages/EmailVerificationForm.jsx';
+
+const GoogleAuthProvider=()=>{
+  return(
+<GoogleOAuthProvider clientId='228681980-jf2buslu6k39bon3ca4e4absmb103592.apps.googleusercontent.com'>
+  <Register/>
+</GoogleOAuthProvider>
+
+  )
+}
 const router = createBrowserRouter([
   {
     path: '',
@@ -26,7 +38,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/register',
-        element: <Register />,
+        element: <GoogleAuthProvider />,
       },
       {
         path: '/chat/:receiverId',
@@ -39,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: '/updatepassword',
         element: <UpdatePassword />,
+      },
+      {
+        path: '/verify/email',
+        element: <EmailVerificationForm />,
       },
       {
         path:'/user/:id',

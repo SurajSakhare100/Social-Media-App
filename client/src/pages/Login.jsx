@@ -7,12 +7,13 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null); // Local state for error messages
     const navigate = useNavigate();
-
+console.log(password)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null); // Clear previous errors
         try {
             const userData = await loginUser({ email, password });
+            console.log(userData)
             if (userData) {
                 navigate('/');
             } else {

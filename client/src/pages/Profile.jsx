@@ -28,6 +28,7 @@ function Profile() {
         fetchPostsData();
     }, [id]);
 
+    console.log(user)
     useEffect(() => {
         const fetchCounts = async () => {
             try {

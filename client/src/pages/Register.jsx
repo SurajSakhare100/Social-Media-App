@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "..";
+import { registerUser } from "../index.js";
+import axios from "axios";
+import GoogleLogin from "../components/GoogleLogin.jsx";
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -24,6 +26,9 @@ function Register() {
       console.log(error.message);
     }
   };
+
+  
+  
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -139,7 +144,8 @@ function Register() {
 
             </div>
           </form>
-
+          <h1 className='text-center'>Or</h1>
+          <GoogleLogin/>
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account? {" "}
             <Link

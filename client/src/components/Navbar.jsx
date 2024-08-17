@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import Profile from "/profile.png";
 import navLogo from '../../public/nav-logo.webp';
-import { getCurrentUser } from "../index.js";
+import { getCurrentUser ,logoutUser} from "../index.js";
 import ThemeToggle from "./ThemeToggle.jsx";
 
 function Navbar() {
@@ -22,8 +22,9 @@ function Navbar() {
 
         fetchUser();
     }, []);
-    const logoutUser = async () => {
+    const logoutUserBtn = async () => {
         try {
+            const data =await logoutUser();
             navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
@@ -104,7 +105,7 @@ function Navbar() {
                                 <>
                                     <li><Link to={`/user/${user._id}`}>Profile</Link></li>
                                     <li><Link to={`/mychat/${user._id}`}>Chat</Link></li>
-                                    <li className="cursor-pointer" onClick={logoutUser}><span>Logout</span></li>
+                                    <li className="cursor-pointer" onClick={logoutUserBtn}><span>Logout</span></li>
                                 </>
                             ) : (
                                 <li><Link to="/login">Login</Link></li>
