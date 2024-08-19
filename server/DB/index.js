@@ -5,7 +5,7 @@ import { DB_NAME } from "../utils/constant.js";
 dotenv.config();
 const connectDB = async () => {
     try {
-        const dbURI = `${process.env.MONGODB_URL}/${DB_NAME}?ssl=true`;
+        const dbURI = `${process.env.MONGODB_URL}/${DB_NAME}`;
 
         console.log(`Connecting to MongoDB at ${dbURI}`);
         const connectionInstance = await mongoose.connect(dbURI, {

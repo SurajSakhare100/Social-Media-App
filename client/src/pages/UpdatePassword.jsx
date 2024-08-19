@@ -8,7 +8,7 @@ function UpdatePassword() {
     const [newPassword, setNewPassword] = useState('');
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data =await updatepassword({oldPassword,newPassword});
+        const data =await updatePassword({oldPassword,newPassword});
       };
     return (
         <>
@@ -34,7 +34,7 @@ function UpdatePassword() {
                                     required
                                     onChange={(e) => setOldPassword(e.target.value)}
                                     placeholder="******"
-                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -47,12 +47,12 @@ function UpdatePassword() {
                                 <input
                                     id="newpassword"
                                     name="newpassword"
-                                    type="newpassword"
+                                    type="password"
                                     autoComplete="newpassword"
                                     required
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     placeholder="******"
-                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-2 block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>

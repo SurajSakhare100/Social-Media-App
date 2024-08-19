@@ -14,15 +14,8 @@ import ChatDashBoard from './pages/ChatDashBoard.jsx';
 import GoogleLogin from './components/GoogleLogin.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import EmailVerificationForm from './pages/EmailVerificationForm.jsx';
-
-const GoogleAuthProvider=()=>{
-  return(
-<GoogleOAuthProvider clientId='228681980-jf2buslu6k39bon3ca4e4absmb103592.apps.googleusercontent.com'>
-  <Register/>
-</GoogleOAuthProvider>
-
-  )
-}
+import { Provider } from 'react-redux';
+import store from './app/store/store.js';
 const router = createBrowserRouter([
   {
     path: '',
@@ -38,7 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/register',
-        element: <GoogleAuthProvider />,
+        element: <Register />,
       },
       {
         path: '/chat/:receiverId',
@@ -57,12 +50,12 @@ const router = createBrowserRouter([
         element: <EmailVerificationForm />,
       },
       {
-        path:'/user/:id',
-        element:<Profile/>
+        path: '/user/:id',
+        element: <Profile />
       },
       {
-        path:'/follows/:type/:id',
-        element:<Follows/>
+        path: '/follows/:type/:id',
+        element: <Follows />
       }
 
     ],
@@ -70,7 +63,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <Provider store={store}>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </Provider>,
 )

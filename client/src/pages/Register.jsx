@@ -31,20 +31,20 @@ function Register() {
   
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className=" min-h-full px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-4xl font-bold leading-9 tracking-tight text-white">
+          <h2 className="mt-10 text-center text-4xl font-bold leading-9 tracking-tight text-black dark:text-white">
             Register
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="text-black sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
 
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium leading-6 text-white"
+                className="block text-sm font-medium leading-6 dark:text-white"
               >
                 Full Name
               </label>
@@ -57,7 +57,7 @@ function Register() {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="John Dev"
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -65,7 +65,7 @@ function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-white"
+                className="block text-sm font-medium leading-6 dark:text-white"
               >
                 Email
               </label>
@@ -78,7 +78,7 @@ function Register() {
                   required
                   placeholder="john123@gmail.com"
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -87,7 +87,7 @@ function Register() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 dark:text-white"
                 >
                   Password
                 </label>
@@ -109,14 +109,14 @@ function Register() {
                   required
                   placeholder="******"
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-white"
+                className="block text-sm font-medium leading-6 dark:text-white"
               >
                 Add Avatar
               </label>
@@ -127,7 +127,7 @@ function Register() {
                   type="file"
                   required
                   onChange={handleFileChange}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ function Register() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md font-bold bg-slate-700 px-3 py-1.5 text-sm  leading-6 text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md font-bold dark:bg-white dark:hover:bg-slate-500 bg-slate-700 px-3 py-1.5 text-sm  leading-6 dark:text-black text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Register
               </button>
@@ -144,7 +144,7 @@ function Register() {
 
             </div>
           </form>
-          <h1 className='text-center'>Or</h1>
+          <h1 className='text-lg text-center mb-2 font-semibold'>Or</h1>
           <GoogleLogin/>
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account? {" "}

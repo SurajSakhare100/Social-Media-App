@@ -1,4 +1,6 @@
 import axios from "axios";
+import { setUser } from "./app/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const url = "http://localhost:3000";
 const handleResponse = (res) => res.data.data;
@@ -128,14 +130,15 @@ const registerUser = async (user) => {
 };
 
 
-const loginUser = async ({ email, password }) => {
+const loginUser = async (email, password ) => {
   try {
-    const response = await axiosInstance.post(`${url}/api/v1/user/loginUser`, {
-       email, password 
+    const response = await axios.post(`${url}/api/v1/user/loginUser`, {
+      email,
+      password,
     }, {
-      withCredentials: true
+      withCredentials: true,
     });
-
+    // useDispatch(setUser(response));
     return handleResponse(response);
   } catch (error) {
     console.log('Error logging in:', error.message);
@@ -153,7 +156,7 @@ const logoutUser = async () => {
 };
 const getCurrentUser = async () => {
   try {
-    const response = await axiosInstance.get(`${url}/api/v1/user/getuser`, {
+    const response = await axios.get(`${url}/api/v1/user/getuser`, {
       withCredentials: true,
     });
     return handleResponse(response);

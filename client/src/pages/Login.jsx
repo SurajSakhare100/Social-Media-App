@@ -7,15 +7,13 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null); // Local state for error messages
     const navigate = useNavigate();
-console.log(password)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null); // Clear previous errors
         try {
-            const userData = await loginUser({ email, password });
-            console.log(userData)
+            const userData = await loginUser( email, password );
             if (userData) {
-                navigate('/');
+                // navigate('/');
             } else {
                 setError('Invalid email or password.'); // Set error message
             }
@@ -28,7 +26,7 @@ console.log(password)
     return (
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <h2 className="mt-10 text-center text-5xl font-bold leading-9 tracking-tight text-white">
+                <h2 className="mt-10 text-center text-5xl font-bold leading-9 tracking-tight text-black dark:text-white">
                     Log In
                 </h2>
             </div>

@@ -8,12 +8,16 @@ import ThemeToggle from "./ThemeToggle.jsx";
 
 function Navbar() {
     const [isSearchVisible, setIsSearchVisible] = useState(true);
-    const [user,setUser]=useState(null)
+    const [user,setUser]=useState(null);
     const navigate = useNavigate();
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const userData = await getCurrentUser();
+                console.log(userData)
+                if(userData.length==0){
+                    setUser(null);
+                }
                 setUser(userData);
             } catch (error) {
                 console.error('Error fetching user or posts:', error);
@@ -31,7 +35,7 @@ function Navbar() {
         }
     };
     return (
-        <div className="fixed top-0 z-10 w-full h-16 md:h-20 px-4 md:px-10 bg-white shadow-md dark:border-gray-50 border-1 border-b dark:bg-black dark:text-black">
+        <div className="fixed top-0 z-10 w-full h-16 md:h-20 px-4 md:px-10 bg-white  shadow-md dark:border-gray-50 border-1 border-b dark:bg-black dark:text-white">
         <div className="w-full h-full flex items-center justify-between">
             {/* Logo Section */}
             <div className="flex-shrink-0">
