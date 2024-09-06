@@ -16,8 +16,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action) {
-        console.log(state)
-      return { ...state, ...action.payload, isAuthenticated: true };
+      return {...action.payload, isAuthenticated: true };
     },
     updateUserProfile(state, action) {
       const { name, profilePicture } = action.payload;
@@ -29,6 +28,5 @@ const userSlice = createSlice({
     },
   },
 });
-
 export const { setUser, updateUserProfile, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

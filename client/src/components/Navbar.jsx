@@ -5,27 +5,12 @@ import Profile from "/profile.png";
 import navLogo from '../../public/nav-logo.webp';
 import { getCurrentUser ,logoutUser} from "../index.js";
 import ThemeToggle from "./ThemeToggle.jsx";
+import { useSelector } from "react-redux";
 
 function Navbar() {
     const [isSearchVisible, setIsSearchVisible] = useState(true);
-    const [user,setUser]=useState(null);
+    const user=useSelector(state=>state.user);
     const navigate = useNavigate();
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getCurrentUser();
-                console.log(userData)
-                if(userData.length==0){
-                    setUser(null);
-                }
-                setUser(userData);
-            } catch (error) {
-                console.error('Error fetching user or posts:', error);
-            }
-        };
-
-        fetchUser();
-    }, []);
     const logoutUserBtn = async () => {
         try {
             const data =await logoutUser();

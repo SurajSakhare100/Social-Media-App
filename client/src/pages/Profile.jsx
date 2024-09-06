@@ -3,21 +3,21 @@ import { countFollowers, countFollowing, getPostByUserId, getUserById } from '..
 import { Link, useParams } from 'react-router-dom';
 import profile from "/profile.png";
 import { FaEdit } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 function Profile() {
-    const [user, setUser] = useState(null);
+    const user=useSelector((state)=>state.user);
     const [posts, setPosts] = useState([]);
     const [count, setCount] = useState({ countfollowers: 0, countfollowing: 0 });
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
+    console.log(user)
 
     useEffect(() => {
         const fetchPostsData = async () => {
             try {
                 const post = await getPostByUserId(id);
-                const user = await getUserById(id);
                 setPosts(post);
-                setUser(user);
                 setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
@@ -28,7 +28,6 @@ function Profile() {
         fetchPostsData();
     }, [id]);
 
-    console.log(user)
     useEffect(() => {
         const fetchCounts = async () => {
             try {

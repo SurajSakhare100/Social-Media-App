@@ -2,7 +2,7 @@ import axios from "axios";
 import { setUser } from "./app/slices/userSlice";
 import { useDispatch } from "react-redux";
 
-const url = "http://localhost:3000";
+export const url = "http://localhost:3000";
 const handleResponse = (res) => res.data.data;
 const handleError = (err) => {
   console.log(err.message);
@@ -159,6 +159,7 @@ const getCurrentUser = async () => {
     const response = await axios.get(`${url}/api/v1/user/getuser`, {
       withCredentials: true,
     });
+    // useDispatch(setUser(response.data));
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -289,6 +290,22 @@ const getChatUser = async (user) => {
   }
 };
 
+
+const createStory = async (userid,formData) => {
+  try {
+    const response = axios.post(`${url}/api/v1/story/createstory/${userid}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials: true,
+    });
+    console.log(response)
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
 export {
   getAllPosts,
   uploadPost,
@@ -312,4 +329,5 @@ export {
   getChat,
   sendChat,
   getChatUser,
+  createStory
 };

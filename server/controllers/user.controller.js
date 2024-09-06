@@ -100,6 +100,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   // Check if email and password are provided
   if (!email || !password) {
     throw new ApiError(400, "Email and password are required");
@@ -111,7 +112,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User does not exist");
   }
 
-  // Verify the user's password (make sure this function is defined in your User model)
+  // Verify the user's password
   // const isPasswordValid = await user.isPasswordCorrect(password);
   // if (!isPasswordValid) {
   //   throw new ApiError(401, "Invalid user credentials");
@@ -119,6 +120,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // Generate tokens
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
   // Prepare cookie options
   const options = {
     httpOnly: true,
@@ -126,13 +128,17 @@ const loginUser = asyncHandler(async (req, res) => {
     sameSite: 'strict',
   };
 
+  // Remove password from the user object
+  const { password: _, ...userWithoutPassword } = user.toObject();
+
   // Send response with cookies
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, { user, accessToken, refreshToken }, "User logged in successfully"));
+    .json(new ApiResponse(200,  userWithoutPassword , "User logged in successfully"));
 });
+
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   try {

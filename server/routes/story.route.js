@@ -4,7 +4,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import { createStory, deleteStory, getStoryById } from '../controllers/story.controller.js';
 const router=express.Router();
 
-router.post('/stories/:userId', verifyJWT,upload.single('media'), createStory);
-router.get('/stories/:id', verifyJWT, getStoryById);
+router.post('/createstory/:userId', verifyJWT,upload.single('story'), createStory);
+router.get('/getstory', verifyJWT, getStoryById);
 router.delete('/stories/:id', verifyJWT, deleteStory);
 export default router
