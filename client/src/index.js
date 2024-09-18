@@ -1,6 +1,4 @@
 import axios from "axios";
-import { setUser } from "./app/slices/userSlice";
-import { useDispatch } from "react-redux";
 
 export const url = "http://localhost:3000";
 const handleResponse = (res) => res.data.data;

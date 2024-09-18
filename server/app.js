@@ -93,7 +93,7 @@ storySockets(io);
 app.use('/auth', googleAuthRoute);
 app.use('/api/v1/chat', chatRouter);
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1/post', postRouter);
+app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/like', likeRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/follow', followRouter);

@@ -51,6 +51,7 @@ const uploadPosts = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
+    console.log("posts")
 
     const posts = await Post.aggregate([
       {
@@ -81,6 +82,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
           content: { $first: "$content" },
           post_image: { $first: "$post_image" },
           creatorDetails: { $first: "$creatorDetails" },
+          createdAt: { $first: "$createdAt" }, // Assuming there's a `createdAt` field
           likeCount: { $sum: { $cond: [{ $ifNull: ["$likes", false] }, 1, 0] } },
           liked: { $sum: { $cond: [{ $eq: ["$likes.user", userId] }, 1, 0] } },
         },
@@ -93,7 +95,11 @@ const getAllPosts = asyncHandler(async (req, res) => {
           creatorDetails: 1,
           likeCount: 1,
           liked: { $gt: ["$liked", 0] },
+          createdAt: 1, // Keep this field for sorting
         },
+      },
+      {
+        $sort: { createdAt: -1 }, // Sort by `createdAt` in descending order (most recent first)
       },
     ]);
 
@@ -177,12 +183,13 @@ const deletePost = asyncHandler(async (req, res) => {
     if (!post) {
       throw new ApiError(404, "Post not found");
     }
+    console.log(post)
 
     if (post.user.toString() !== req.user._id.toString()) {
       throw new ApiError(403, "You are not authorized to delete this post");
     }
 
-    await post.remove();
+    await post.deleteOne();
 
     return res
       .status(200)

@@ -16,6 +16,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import EmailVerificationForm from './pages/EmailVerificationForm.jsx';
 import { Provider } from 'react-redux';
 import store from './app/store/store.js';
+import UpdateProfile from './pages/UpdateProfile.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: '/follows/:type/:id',
         element: <Follows />
+      },
+      {
+        path: '/UpdateProfile',
+        element: <UpdateProfile />
       }
 
     ],

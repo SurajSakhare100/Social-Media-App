@@ -4,27 +4,25 @@ import Comments from './Comments';
 import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js';
 import { FaCommentAlt } from 'react-icons/fa';
 import Profile from "/profile.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletePost, fetchPosts } from '../app/slices/postSlice.js';
 
 function Post() {
-    const [posts, setPosts] = useState([]);
-    const [user, setUser] = useState(null);
-
+    const user = useSelector((state) => state.user);
+    const posts = useSelector((state) => state.posts.posts);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     useEffect(() => {
-        const fetchUserAndPosts = async () => {
+        const fetchData = async () => {
             try {
-                const userData = await getCurrentUser();
-                setUser(userData);
-                if (userData) {
-                    const postData = await getAllPosts(userData._id);
-                    setPosts(postData);
-                }
+                    dispatch(fetchPosts())
             } catch (error) {
                 console.error('Error fetching user or posts:', error);
             }
         };
 
-        fetchUserAndPosts();
+        fetchData();
     }, []);
 
     const handleLike = async (postId) => {
@@ -71,7 +69,27 @@ function Post() {
             )
         );
     };
+    const [dropdownOpen, setDropdownOpen] = useState(null); // Track the open dropdown post
 
+    const toggleDropdown = (postId) => {
+        if (dropdownOpen === postId) {
+            setDropdownOpen(null); // Close dropdown if it's already open
+        } else {
+            setDropdownOpen(postId); // Open dropdown for this specific post
+        }
+    };
+
+    const handleEdit = (postId) => {
+        // Handle post edit logic here
+        console.log("Editing post:", postId);
+        dispatch(editPost(postId)); // Example dispatch for editing
+    };
+
+    const handleDelete = (postId) => {
+        // Handle post delete logic here
+        console.log("Deleting post:", postId);
+        dispatch(deletePost(postId)); // Example dispatch for deleting
+    };
     return (
         <div className="">
             <dialog id="my_modal_1" className="modal px-2" >
@@ -90,24 +108,54 @@ function Post() {
             </dialog>
 
             <div className="w-full ">
-                {posts.map(post => (
-                    <div key={post._id} className="my-4 p-4 border rounded-lg dark:bg-black dark:text-white dark:text-pretty shadow-md">
-                        <Link
-                            to={`/user/${post.creatorDetails?._id}`}
+                {posts.length>0 && posts.map(post => (
+                    <div key={post._id} className="my-4 p-4 border rounded-lg dark:bg-black bg-white dark:text-white dark:text-pretty shadow-md">
+                        <div
                             className="flex items-center mb-4"
                         >
-                            <div className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden">
+                            <Link 
+                            to={`/user/${post.creatorDetails?._id}`}
+                            className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden">
                                 <img
                                     src={post.creatorDetails?.profilePicture || Profile}
                                     alt={`${post.creatorDetails?.profileName}'s profile`}
                                     className="w-full h-full object-cover"
                                 />
-                            </div>
+                            </Link>
                             <div className="ml-4 flex-1">
                                 <h1 className="text-lg font-semibold">{post.creatorDetails?.profileName || "Profile name"}</h1>
                                 <h2 className="text-md text-gray-600">{post.creatorDetails?.username || "User name"}</h2>
                             </div>
-                        </Link>
+                            <div className="relative">
+                            <button
+                                onClick={() => toggleDropdown(post._id)}
+                                className="text-gray-500 hover:text-gray-700 text-xl focus:outline-none"
+                            >
+                                &#x2026; {/* Three-dot button */}
+                            </button>
+
+                            {/* Dropdown */}
+                            {dropdownOpen === post._id && (
+                                <div className="dropdown-menu absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-md shadow-lg">
+                                    <button
+                                        onClick={() => handleEdit(post._id)}
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(post._id)}
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        </div>
+                        
+
                         <div className="py-2">
                             <p className="text-gray-700">{post.content}</p>
                         </div>

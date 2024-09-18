@@ -11,7 +11,6 @@ function Profile() {
     const [count, setCount] = useState({ countfollowers: 0, countfollowing: 0 });
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
-    console.log(user)
 
     useEffect(() => {
         const fetchPostsData = async () => {
@@ -90,7 +89,7 @@ function Profile() {
                         </div>
                     </div>
                     <div className='w-full mt-2'>
-                        <button className='w-full btn btn-active text-xl'>Edit Profile <span className='pt-0.5'><FaEdit/></span></button>
+                        <Link className='w-full btn btn-active text-xl' to={'/UpdateProfile'}>Edit Profile <span className='pt-0.5'><FaEdit/></span></Link>
                         
                     </div>
                 </div>

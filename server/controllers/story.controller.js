@@ -41,7 +41,6 @@ const getStoryById = async (req, res) => {
 };
 
 
-
 // Delete Story
 const deleteStory = async (req, res) => {
   try {

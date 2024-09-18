@@ -1,26 +1,23 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../index.js'; 
-import { useDispatch } from 'react-redux';
-import { setUser } from '../app/slices/userSlice.js';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../app/slices/userSlice.js';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null); // Local state for error messages
     const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
     const dispatch=useDispatch(null)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null); // Clear previous errors
         try {
-            const userData = await loginUser( email, password );
-            if (userData) {
-                dispatch(setUser(userData))
-                // navigate('/');
-            } else {
-                setError('Invalid email or password.'); // Set error message
+            dispatch(loginUser({email,password}))
+            if(!user.isAuthenticated){
+                navigate('/')
             }
+            navigate('/')
         } catch (error) {
             setError('An error occurred during login.'); // Set error message for API errors
             console.error('Error occurred during login:', error);

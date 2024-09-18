@@ -5,23 +5,11 @@ import Suggestion from '../components/Suggestion';
 import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
 import Story from '../components/Story';
-import { getCurrentUser } from '../index.js';
+import { useSelector } from 'react-redux';
 
 function Home() {
-    const [user, setUser] = useState(null);
- 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getCurrentUser();
-                setUser(userData);
-            } catch (error) {
-                console.error('Error fetching user or posts:', error);
-            }
-        };
+    const user = useSelector((state) => state.user);
 
-        fetchUser();
-    }, []);
     return (
         <div className='w-full h-full pt-20 pb-10 md:pt-24 overflow-y-auto flex flex-col md:flex-row  px-4 md:px-20 gap-6 bg-[#F4F2EE] dark:bg-black dark:text-white' >
 
@@ -36,7 +24,7 @@ function Home() {
                             />
                         </div>
                         <div>
-                            <h1 className='text-2xl font-semibold text-center'>{user?.username}</h1>
+                            <h1 className='text-2xl font-semibold text-center'>{user?.profileName}</h1>
                             <h1 className='text-lg text-gray-600  text-center'>{user?.bio}</h1>
                         </div>
                     </div>
