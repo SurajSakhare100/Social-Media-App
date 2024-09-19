@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import CreatePost from '../components/CreatePost';
-import Post from '../components/Post';
 import Suggestion from '../components/Suggestion';
 import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
 import Story from '../components/Story';
 import { useSelector } from 'react-redux';
+import PostPage from './PostPage';
 
 function Home() {
     const user = useSelector((state) => state.user);
@@ -38,7 +38,7 @@ function Home() {
                 <div className='mb-6'>
                     <CreatePost />
                 </div>
-                <Post />
+                <PostPage />
             </div>
 
 

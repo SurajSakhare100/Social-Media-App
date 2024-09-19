@@ -1,201 +1,179 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import Comments from './Comments';
-import { getAllPosts, getCurrentUser, likePost, unlikePost } from '../index.js';
 import { FaCommentAlt } from 'react-icons/fa';
 import Profile from "/profile.png";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, fetchPosts } from '../app/slices/postSlice.js';
+import { deletePost, editPost } from '../app/slices/postSlice.js';
+import { likePost, unlikePost } from '../index.js';
 
-function Post() {
+function Post({ post }) {
     const user = useSelector((state) => state.user);
-    const posts = useSelector((state) => state.posts.posts);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                    dispatch(fetchPosts())
-            } catch (error) {
-                console.error('Error fetching user or posts:', error);
-            }
-        };
+    const [dropdownOpen, setDropdownOpen] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
+    const [updatedContent, setUpdatedContent] = useState(post.content); 
+    const [postState, setPostState] = useState(post); // Local post state
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [modalImageSrc, setModalImageSrc] = useState('');
+    const [showComments, setShowComments] = useState(false);
 
-        fetchData();
-    }, []);
-
-    const handleLike = async (postId) => {
+    const handleLike = async () => {
         if (!user) return;
 
         try {
-            const updatedPosts = await Promise.all(posts.map(async post => {
-                if (post._id === postId) {
-                    if (post.liked) {
-                        await unlikePost(postId, user._id);
-                        return {
-                            ...post,
-                            liked: false,
-                            likeCount: post.likeCount - 1
-                        };
-                    } else {
-                        await likePost(postId, user._id);
-                        return {
-                            ...post,
-                            liked: true,
-                            likeCount: post.likeCount + 1
-                        };
-                    }
-                }
-                return post;
-            }));
-            setPosts(updatedPosts);
+            if (postState.liked) {
+                await unlikePost(postState._id, user._id);
+                setPostState(prevState => ({
+                    ...prevState,
+                    liked: false,
+                    likeCount: prevState.likeCount - 1,
+                }));
+            } else {
+                await likePost(postState._id, user._id);
+                setPostState(prevState => ({
+                    ...prevState,
+                    liked: true,
+                    likeCount: prevState.likeCount + 1,
+                }));
+            }
         } catch (error) {
             console.error('Error liking/unliking post:', error);
         }
     };
 
+
     const showPost = (e) => {
-        const modal = document.getElementById('my_modal_1');
-        const modalImg = document.getElementById('modelImg');
-        modalImg.src = e.target.src;
-        modal.showModal();
-    }
-
-    const toggleComments = (postId) => {
-        setPosts(prevPosts =>
-            prevPosts.map(post =>
-                post._id === postId ? { ...post, showComments: !post.showComments } : post
-            )
-        );
-    };
-    const [dropdownOpen, setDropdownOpen] = useState(null); // Track the open dropdown post
-
-    const toggleDropdown = (postId) => {
-        if (dropdownOpen === postId) {
-            setDropdownOpen(null); // Close dropdown if it's already open
-        } else {
-            setDropdownOpen(postId); // Open dropdown for this specific post
-        }
+        setModalImageSrc(e.target.src);
+        setIsImageModalOpen(true);
     };
 
-    const handleEdit = (postId) => {
-        // Handle post edit logic here
-        console.log("Editing post:", postId);
-        dispatch(editPost(postId)); // Example dispatch for editing
+    const closeModal = () => {
+        setIsImageModalOpen(false);
     };
 
-    const handleDelete = (postId) => {
-        // Handle post delete logic here
-        console.log("Deleting post:", postId);
-        dispatch(deletePost(postId)); // Example dispatch for deleting
+    const toggleComments = () => {
+        setShowComments(!showComments);
     };
+
+    const toggleDropdown = () => {
+        setDropdownOpen(dropdownOpen === postState._id ? null : postState._id);
+    };
+
+    const handleEdit = () => {
+        setIsEditModalOpen(true);
+    };
+
+    const handleDelete = () => {
+        dispatch(deletePost(postState._id));
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        dispatch(editPost({ postId: postState._id, content: updatedContent }));
+        setIsEditModalOpen(false); 
+    };
+
+    const handleEditModalClose = () => {
+        setIsEditModalOpen(false); 
+    };
+
     return (
-        <div className="">
-            <dialog id="my_modal_1" className="modal px-2" >
-                <div className="modal-box w-fit ">
-                    <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-info absolute right-6 top-4">✕</button>
-                        <figure className='w-fit h-80 md:h-[600px] rounded-lg'>
-                            <img
-                                id='modelImg'
-                                className="rounded-lg w-full h-full object-cover"
+        <div className="my-4 p-4 border rounded-lg dark:bg-black bg-white dark:text-white shadow-md">
+            {/* Edit Post Modal */}
+            {isEditModalOpen && (
+                <dialog open className="modal px-2">
+                    <div className="modal-box">
+                        <form onSubmit={handleEditSubmit}>
+                            <h2 className="text-lg font-semibold mb-4">Edit Post</h2>
+                            <textarea
+                                className="textarea textarea-bordered w-full"
+                                value={updatedContent}
+                                onChange={(e) => setUpdatedContent(e.target.value)}
+                                rows={4}
                             />
-                        </figure>
-                    </form>
-                </div>
-                <label className="modal-backdrop" htmlFor="my_modal_7">Close</label>
-            </dialog>
-
-            <div className="w-full ">
-                {posts.length>0 && posts.map(post => (
-                    <div key={post._id} className="my-4 p-4 border rounded-lg dark:bg-black bg-white dark:text-white dark:text-pretty shadow-md">
-                        <div
-                            className="flex items-center mb-4"
-                        >
-                            <Link 
-                            to={`/user/${post.creatorDetails?._id}`}
-                            className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden">
-                                <img
-                                    src={post.creatorDetails?.profilePicture || Profile}
-                                    alt={`${post.creatorDetails?.profileName}'s profile`}
-                                    className="w-full h-full object-cover"
-                                />
-                            </Link>
-                            <div className="ml-4 flex-1">
-                                <h1 className="text-lg font-semibold">{post.creatorDetails?.profileName || "Profile name"}</h1>
-                                <h2 className="text-md text-gray-600">{post.creatorDetails?.username || "User name"}</h2>
+                            <div className="modal-action">
+                                <button type="button" className="btn btn-error" onClick={handleEditModalClose}>
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn btn-success">
+                                    Save
+                                </button>
                             </div>
-                            <div className="relative">
-                            <button
-                                onClick={() => toggleDropdown(post._id)}
-                                className="text-gray-500 hover:text-gray-700 text-xl focus:outline-none"
-                            >
-                                &#x2026; {/* Three-dot button */}
-                            </button>
-
-                            {/* Dropdown */}
-                            {dropdownOpen === post._id && (
-                                <div className="dropdown-menu absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-md shadow-lg">
-                                    <button
-                                        onClick={() => handleEdit(post._id)}
-                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(post._id)}
-                                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
-                        </div>
-                        
-
-                        <div className="py-2">
-                            <p className="text-gray-700">{post.content}</p>
-                        </div>
-                        {post.post_image && (
-                            <figure className='mb-4 aspect-square'>
-                                <img
-                                    src={post.post_image}
-                                    alt="Post"
-                                    className="rounded-lg w-full h-full object-cover cursor-pointer"
-                                    onDoubleClick={(e) => showPost(e)}
-                                />
-                            </figure>
-                        )}
-                        <div className="flex items-center justify-start text-gray-600 gap-4">
-                            <div
-                                className="flex items-center cursor-pointer"
-                                onClick={() => handleLike(post._id)}
-                            >
-                                {post.liked ? (
-                                    <AiFillLike className="text-red-500 text-2xl" />
-                                ) : (
-                                    <AiOutlineLike className="text-gray-500 text-2xl" />
-                                )}
-                                <span className="ml-2">{post.likeCount}</span>
-                            </div>
-                            <div
-                                className="flex items-center cursor-pointer pt-1"
-                                onClick={() => toggleComments(post._id)}
-                            >
-                                <FaCommentAlt className="text-gray-500 text-xl" />
-                                <span className="ml-2">Comments</span>
-                            </div>
-                        </div>
-
-                        {post.showComments && <Comments postId={post._id} userId={user._id} userPicture={user.profilePicture} />}
+                        </form>
                     </div>
-                ))}
+                </dialog>
+            )}
+
+            {/* Post Image Modal */}
+            {isImageModalOpen && (
+                <dialog open className="modal px-2">
+                    <div className="modal-box w-fit">
+                        <button onClick={closeModal} className="btn btn-sm btn-circle btn-info absolute right-6 top-4">✕</button>
+                        <figure className="w-fit h-80 md:h-[600px] rounded-lg">
+                            <img src={modalImageSrc} className="rounded-lg w-full h-full object-cover" />
+                        </figure>
+                    </div>
+                </dialog>
+            )}
+
+            {/* Post Header */}
+            <div className="flex items-center mb-4">
+                <Link to={`/user/${postState.creatorDetails?._id}`} className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden">
+                    <img
+                        src={postState.creatorDetails?.profilePicture || Profile}
+                        alt={`${postState.creatorDetails?.profileName}'s profile`}
+                        className="w-full h-full object-cover"
+                    />
+                </Link>
+                <div className="ml-4 flex-1">
+                    <h1 className="text-lg font-semibold">{postState.creatorDetails?.profileName || "Profile name"}</h1>
+                    <h2 className="text-md text-gray-600">{postState.creatorDetails?.username || "User name"}</h2>
+                </div>
+                <div className="relative">
+                    <button onClick={toggleDropdown} className="text-gray-500 hover:text-gray-700 text-xl focus:outline-none">
+                        &#x2026;
+                    </button>
+                    {dropdownOpen === postState._id && (
+                        <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
+                            <button onClick={handleEdit} className="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-900">
+                                Edit
+                            </button>
+                            <button onClick={handleDelete} className="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-900">
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* Post Content */}
+            <p>{postState.content}</p>
+            {postState.post_image && (
+                <figure onClick={showPost} className="mt-2 w-full h-60 rounded-lg overflow-hidden cursor-pointer">
+                    <img src={postState.post_image} className="w-full h-full object-cover" />
+                </figure>
+            )}
+
+            {/* Post Actions */}
+            <div className="flex items-center justify-between mt-4">
+                <button onClick={handleLike} className="flex items-center gap-1">
+                    {postState.liked ? <AiFillLike className="text-xl text-blue-600" /> : <AiOutlineLike className="text-xl" />}
+                    <span>{postState.likeCount}</span>
+                </button>
+                <button onClick={toggleComments} className="flex items-center gap-1">
+                    <FaCommentAlt className="text-lg" />
+                    <span>{postState.commentCount}</span>
+                </button>
+            </div>
+
+            {/* Comments Section */}
+            {showComments && (
+                <Comments postId={postState._id} userId={user._id} userPicture={user.profilePicture} />
+            )}
         </div>
     );
 }
 
-export default Post
+export default Post;

@@ -35,19 +35,20 @@ export const deletePost = createAsyncThunk('posts/deletePost', async (postId) =>
 
 // Edit a post
 export const editPost = createAsyncThunk('posts/editPost', async ({ postId, updatedData }) => {
-  const response = await axios.put(url+`/${postId}`, updatedData);
+  console.log(updatedData)
+  const response = await axiosInstance.put(url+`/editpost/${postId}`, updatedData);
   return response.data;
 });
 
 // Like or unlike a post
 export const likePost = createAsyncThunk('posts/likePost', async (postId) => {
-  const response = await axios.post(url+`/${postId}/like`);
+  const response = await axiosInstance.post(url+`/${postId}/like`);
   return response.data;
 });
 
 // Add a comment to a post
 export const addComment = createAsyncThunk('posts/addComment', async ({ postId, comment }) => {
-  const response = await axios.post(url+`/${postId}/comment`, { comment });
+  const response = await axiosInstance.post(url+`/${postId}/comment`, { comment });
   return response.data;
 });
 

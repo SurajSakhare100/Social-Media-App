@@ -20,10 +20,10 @@ function Navbar() {
     }, [dispatch, user.isAuthenticated]);
     useEffect(() => {
         // Redirect to login if the user is not authenticated
-        if (user.status === 'succeeded' && !user.isAuthenticated) {
+        if (user.status === 'failed' && !user.isAuthenticated) {
             navigate('/login');
         }
-    }, [user.isAuthenticated, navigate]);
+    }, [user.isAuthenticated,user.status, navigate]);
 
     const logoutUserBtn = async () => {
         try {
