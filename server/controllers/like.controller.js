@@ -9,8 +9,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const likePost = asyncHandler( async (req, res) => {
   try {
     // Check if user_id exists
-    const { user_id, post_id } = req.body;
-
+    const {id}=req.user
+    const { post_id } = req.body;
+    const user_id=id;
+    console.log({post_id,user_id})
     // Check if the user has already liked the post
     const existingLike = await Like.findOne({ post: post_id, user: user_id });
     if (existingLike) return res.status(400).json({ message: "Already liked" });
@@ -32,8 +34,11 @@ const likePost = asyncHandler( async (req, res) => {
 
 const unlikePost=asyncHandler(async(req,res)=>{
   try {
-    const { post_id, user_id } = req.body;
-
+   // Check if user_id exists
+   const {id}=req.user
+   const { post_id } = req.body;
+   const user_id=id;
+   console.log({post_id,user_id})
     // Find and delete the like
     const like = await Like.findOneAndDelete({ post: post_id, user: user_id });
     if (!like) return res.status(400).json({ message: 'Like not found' });

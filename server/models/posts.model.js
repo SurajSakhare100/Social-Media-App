@@ -11,10 +11,6 @@ const PostSchema = new Schema(
       type: String,
       required: true,
     },
-    tags:{
-        type: String,
-      }
-    ,
     likesCount: { type: Number, default: 0 },
     user: {
       type: Schema.Types.ObjectId,

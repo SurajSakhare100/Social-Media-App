@@ -51,7 +51,6 @@ const uploadPosts = asyncHandler(async (req, res) => {
 const getAllPosts = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("posts")
 
     const posts = await Post.aggregate([
       {
@@ -63,10 +62,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
         },
       },
       {
-        $unwind: {
-          path: "$creatorDetails",
-          preserveNullAndEmptyArrays: true,
-        },
+        $unwind: "$creatorDetails", // Ensures creator details are returned properly
       },
       {
         $lookup: {
@@ -77,14 +73,11 @@ const getAllPosts = asyncHandler(async (req, res) => {
         },
       },
       {
-        $group: {
-          _id: "$_id",
-          content: { $first: "$content" },
-          post_image: { $first: "$post_image" },
-          creatorDetails: { $first: "$creatorDetails" },
-          createdAt: { $first: "$createdAt" }, // Assuming there's a `createdAt` field
-          likeCount: { $sum: { $cond: [{ $ifNull: ["$likes", false] }, 1, 0] } },
-          liked: { $sum: { $cond: [{ $eq: ["$likes.user", userId] }, 1, 0] } },
+        $addFields: {
+          likeCount: { $size: "$likes" }, // Count the total number of likes
+          liked: {
+            $in: [userId, "$likes.user"], // Check if the user liked the post
+          },
         },
       },
       {
@@ -94,23 +87,26 @@ const getAllPosts = asyncHandler(async (req, res) => {
           post_image: 1,
           creatorDetails: 1,
           likeCount: 1,
-          liked: { $gt: ["$liked", 0] },
+          liked: 1,
           createdAt: 1, // Keep this field for sorting
         },
       },
       {
-        $sort: { createdAt: -1 }, // Sort by `createdAt` in descending order (most recent first)
+        $sort: { createdAt: -1 }, // Sort by most recent posts
       },
     ]);
 
-    res.status(200).json(
-      new ApiResponse(200, posts, "Posts fetched successfully with creator details")
-    );
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully with creator details",
+      data: posts,
+    });
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // Read Posts by User ID
 const getPostByUserId = asyncHandler(async (req, res) => {
@@ -137,8 +133,7 @@ const getPostByUserId = asyncHandler(async (req, res) => {
 const updatePost = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const { content, tags } = req.body;
-
+    const { content } = req.body;
     const post = await Post.findById(id);
     if (!post) {
       throw new ApiError(404, "Post not found");
@@ -149,7 +144,6 @@ const updatePost = asyncHandler(async (req, res) => {
     }
 
     post.content = content || post.content;
-    post.tags = tags || post.tags;
 
     if (req.file) {
       const post_image = req.file.path;
