@@ -1,18 +1,19 @@
 import express from 'express';
 import { getAllCommentsOfPost, createComment, updateComment, deleteComment } from '../controllers/comment.controller.js';
+import { verifyJWT } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
 // Fetch all comments for a specific post
-router.get('/posts/:postId/comments', getAllCommentsOfPost);
+router.get('/:postId',verifyJWT, getAllCommentsOfPost);
 
 // Create a comment for a specific post
-router.post('/posts/:postId/comments', createComment);
+router.post('/:postId',verifyJWT, createComment);
 
 // Update a specific comment
-router.put('/comments/:commentId', updateComment);
+router.put('/:postId/:commentId',verifyJWT, updateComment);
 
 // Delete a specific comment
-router.delete('/comments/:commentId', deleteComment);
+router.delete('/:postId/:commentId',verifyJWT, deleteComment);
 
 export default router;

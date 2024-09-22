@@ -53,34 +53,38 @@ export const unlikePost = createAsyncThunk('posts/unlikePost', async (post_id) =
   const response = await axiosInstance.post(likeurl + `/unlikepost`, { post_id });
   return response.data;
 });
-
 // Add a comment to a post (Create)
-export const addComment = createAsyncThunk('posts/addComment', async ({ postId, comment }) => {
-  const response = await axiosInstance.post(commenturl + `/${postId}/comment`, { comment });
+export const addComment = createAsyncThunk('posts/addComment', async ({ postId, userComment }) => {
+  const response = await axiosInstance.post(`${commenturl}/${postId}`, { userComment });
+  
   return response.data;
 });
 
 // Fetch comments for a post (Read)
 export const fetchComments = createAsyncThunk('posts/fetchComments', async (postId) => {
-  const response = await axiosInstance.get(commenturl + `/${postId}/comments`);
-  return response.data.comments; // Assuming the comments are in the "comments" field
+  const response = await axiosInstance.get(`${commenturl}/${postId}`);
+  return handleResponse(response); // Ensure it returns the correct data
 });
 
 // Edit a comment (Update)
 export const editComment = createAsyncThunk('posts/editComment', async ({ postId, commentId, comment }) => {
-  const response = await axiosInstance.put(commenturl + `/${postId}/comment/${commentId}`, { comment });
-  return response.data;
+  const response = await axiosInstance.put(`${commenturl}/${postId}/${commentId}`, { comment });
+  return handleResponse(response);
 });
 
 // Delete a comment (Delete)
 export const deleteComment = createAsyncThunk('posts/deleteComment', async ({ postId, commentId }) => {
-  await axiosInstance.delete(commenturl + `/${postId}/comment/${commentId}`);
-  return commentId;
+  await axiosInstance.delete(`${commenturl}/${postId}/${commentId}`);
+  return { postId, commentId }; // Return both postId and commentId for better clarity
 });
 
 // Initial state
 const initialState = {
-  posts: [],
+  posts: [
+    {
+      comments:[]
+    }
+  ],
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
 };

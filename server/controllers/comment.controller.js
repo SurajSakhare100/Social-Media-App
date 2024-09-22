@@ -53,8 +53,9 @@ const fetchCommentsWithUserDetails = async (postId) => {
 
 // Create a comment
 const createComment = asyncHandler(async (req, res) => {
-  const { userComment, postId, userId } = req.body;
-
+  const { userComment  } = req.body;
+  const {postId}=req.params;
+  const userId=req.user._id
   // Validate input
   if (!userComment || !postId || !userId) {
     return res.status(400).json(new ApiResponse(400, null, "Missing required fields"));

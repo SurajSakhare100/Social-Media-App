@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
+import { options } from "../utils/constant.js";
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
@@ -66,8 +67,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateTokens(user._id);
 
     res.status(200)
-      .cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: "strict" })
-      .cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "strict" })
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(new ApiResponse(200, { ...user.toObject(), password: undefined }, "Logged in successfully"));
   } catch (error) {
     console.error(error);

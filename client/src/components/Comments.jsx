@@ -1,64 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { getAllComments, createComment, updateComment, deleteComment } from "../index.js";
+import { getAllComments } from "../index.js"; // remove unused imports if not needed
+import { addComment, editComment, deleteComment, fetchComments } from "../app/slices/postSlice.js";
+import { useDispatch, useSelector } from "react-redux";
 
 function Comments({ postId, userId, userPicture }) {
-  const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingComment, setEditingComment] = useState("");
+  // const [comments, setc] = useState("");
+  const dispatch = useDispatch();
+  const posts=useSelector((state)=>state.posts.posts)
 
+  // Fetch comments on component mount or when postId changes
   useEffect(() => {
-    const fetchComments = async () => {
+    const fetchCommentsData = async () => {
       try {
-        const data = await getAllComments(postId);
-        setComments(data[0]?.comments || []);
+        dispatch(fetchComments(postId));
       } catch (error) {
         console.error("Error fetching comments:", error);
-        setComments([]);
       }
     };
 
-    fetchComments();
-  }, [postId]);
+    fetchCommentsData();
+  }, [postId, dispatch]);
 
+  // Handle adding or updating a comment
   const handleComment = async (e) => {
     e.preventDefault();
     try {
       if (editingCommentId) {
-        await updateComment(editingCommentId, editingComment);
+        // Update existing comment
+        dispatch(editComment({ postId, commentId: editingCommentId, comment: editingComment }));
         setEditingCommentId(null);
         setEditingComment("");
       } else {
-        await createComment(userComment, postId, userId);
+        // Create new comment
+        dispatch(addComment({ postId,userComment }));
         setUserComment(""); // Clear the input field after submission
       }
-      const data = await getAllComments(postId); // Refresh comments after adding/updating
-      setComments(data[0]?.comments || []);
+
+      // Refresh comments after adding/updating
+      dispatch(fetchComments(postId));
     } catch (error) {
       console.error("Error creating/updating comment:", error);
     }
   };
 
+  // Handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteComment(commentId);
-      const data = await getAllComments(postId); // Refresh comments after deleting
-      setComments(data[0]?.comments || []);
+      dispatch(deleteComment({ postId, commentId }));
+      dispatch(fetchComments(postId));
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
 
+  // Set comment for editing
   const startEditing = (commentId, comment) => {
     setEditingCommentId(commentId);
     setEditingComment(comment);
   };
 
+  console.log(posts)
   return (
     <div>
+      {/* Comments list */}
       <div className="chat chat-start my-2 flex flex-col gap-4">
-        {comments.length > 0 ? (
-          comments.map((comment) => (
+        {posts?.length > 0 ? (
+          posts.map((comment) => (
             <div
               key={comment._id}
               className={`flex gap-2 ${comment.author === userId ? "self-end" : ""}`}
@@ -73,8 +83,18 @@ function Comments({ postId, userId, userPicture }) {
               </div>
               {comment.author === userId && (
                 <div className="flex gap-2">
-                  <button onClick={() => startEditing(comment._id, comment.comment)}>Edit</button>
-                  <button onClick={() => handleDeleteComment(comment._id)}>Delete</button>
+                  <button
+                    onClick={() => startEditing(comment._id, comment.comment)}
+                    className="text-sm text-blue-500"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteComment(comment._id)}
+                    className="text-sm text-red-500"
+                  >
+                    Delete
+                  </button>
                 </div>
               )}
             </div>
@@ -84,6 +104,7 @@ function Comments({ postId, userId, userPicture }) {
         )}
       </div>
 
+      {/* Comment form */}
       <div className="flex gap-2 w-full mt-4 items-center">
         <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
           <img
@@ -92,19 +113,23 @@ function Comments({ postId, userId, userPicture }) {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="mt-2 flex flex-row items-center justify-center flex-shrink">
+        <div className="mt-2 flex flex-row items-center justify-center flex-grow">
           <form onSubmit={handleComment} className="w-full flex gap-2">
             <input
               id="comment"
               name="comment"
               type="text"
-              placeholder="Comment your thoughts.."
+              placeholder="Comment your thoughts..."
               value={editingCommentId ? editingComment : userComment}
-              onChange={(e) => editingCommentId ? setEditingComment(e.target.value) : setUserComment(e.target.value)}
-              className="pl-2 rounded-md border-0 text-sm md:py-2 w-42 md:w-fit text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+              onChange={(e) =>
+                editingCommentId
+                  ? setEditingComment(e.target.value)
+                  : setUserComment(e.target.value)
+              }
+              className="pl-2 rounded-md border-0 text-sm py-2 w-full text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
             />
-            <button type="submit" className="btn flex-shrink btn-primary">
-              {editingCommentId ? "Update Comment" : "Add Comment"}
+            <button type="submit" className="btn btn-primary">
+              {editingCommentId ? "Update" : "Add"}
             </button>
           </form>
         </div>
