@@ -1,34 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { getCurrentUser } from '../index.js';
-
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { follow, unfollow } from '../index.js';
 
 function FollowBtn({ followerId, followingId, initialIsFollowing }) {
-    const [user, setUser] = useState(null);
- 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getCurrentUser();
-                setUser(userData);
-            } catch (error) {
-                console.error('Error fetching user or posts:', error);
-            }
-        };
+    // Get the current logged-in user from Redux state
+    const user = useSelector((state) => state.user);
 
-        fetchUser();
-    }, []);
+    // State to manage if the current user is following the other user
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
 
-    const handlefollowUnfollowUser = async () => {
+    // Function to handle follow/unfollow actions
+    const handleFollowUnfollowUser = async () => {
         try {
-            let data;
             if (!isFollowing) {
-                data = await follow(followerId, followingId);
+                // Call follow API if the user is not following
+                await follow(followerId, followingId);
             } else {
-                data = await unfollow(followerId, followingId);
+                // Call unfollow API if the user is already following
+                await unfollow(followerId, followingId);
             }
-            setIsFollowing(!isFollowing); // Update the state locally
+
+            // Toggle the follow state locally after success
+            setIsFollowing((prevState) => !prevState);
         } catch (error) {
             console.error("Failed to follow/unfollow user:", error);
         }
@@ -36,8 +29,9 @@ function FollowBtn({ followerId, followingId, initialIsFollowing }) {
 
     return (
         <button
-            className={`btn ${isFollowing ? 'btn-success' : "btn-info"}`}
-            onClick={handlefollowUnfollowUser}
+            className={`btn ${isFollowing ? 'btn-success' : 'btn-info'}`}
+            onClick={handleFollowUnfollowUser}
+            // Disable the button if the user is trying to follow themselves
             disabled={user?._id === followingId}
         >
             {isFollowing ? 'Unfollow' : 'Follow'}

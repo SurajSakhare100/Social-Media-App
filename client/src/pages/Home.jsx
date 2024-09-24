@@ -3,9 +3,9 @@ import CreatePost from '../components/CreatePost';
 import Suggestion from '../components/Suggestion';
 import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
-import Story from '../components/Story';
 import { useSelector } from 'react-redux';
 import PostPage from './PostPage';
+import AddStory from '../components/AddStory';
 
 function Home() {
     const user = useSelector((state) => state.user);
@@ -33,7 +33,7 @@ function Home() {
 
             <div className='flex-1 md:px-20'>
                 <div className='my-4'>
-                    <Story/>
+                    <AddStory/>
                 </div>
                 <div className='mb-6'>
                     <CreatePost />

@@ -85,7 +85,7 @@ const uploadPost = async (post) => {
 
 const getPostByUserId = async (id) => {
   try {
-    const response = await axiosInstance.get(`${url}/api/v1/post/getpostbyuserid/${id}`);
+    const response = await axiosInstance.get(`${url}/api/v1/posts/getpostbyuser/${id}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);

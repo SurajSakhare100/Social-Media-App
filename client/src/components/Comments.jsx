@@ -7,8 +7,8 @@ function Comments({ postId, userId, userPicture }) {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingComment, setEditingComment] = useState("");
   const dispatch = useDispatch();
-  const post = useSelector((state) => state.posts.posts.find(p => p._id === postId)); // Get the specific post
-
+  const post = useSelector((state) => state.posts.posts.find(p => p._id === postId)); 
+  // Get the specific post
   useEffect(() => {
     dispatch(fetchComments(postId));
   }, [postId, dispatch]);
@@ -38,8 +38,8 @@ function Comments({ postId, userId, userPicture }) {
     <div>
       {/* Comments list */}
       <div className="chat chat-start my-2 flex flex-col gap-4">
-        {post?.comments?.length > 0 ? (
-          post.comments.map((comment) => (
+        {post?.comments ? (
+          post.comments[0]?.comments.map((comment) => (
             <div key={comment._id} className={`flex gap-2 ${comment.author === userId ? "self-end" : ""}`}>
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">

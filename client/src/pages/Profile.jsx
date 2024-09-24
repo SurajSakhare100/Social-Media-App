@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { countFollowers, countFollowing, getPostByUserId, getUserById } from '../index.js';
 import { Link, useParams } from 'react-router-dom';
 import profile from "/profile.png";
 import { FaEdit } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { countFollowers, countFollowing } from '../app/slices/followSlice.js';
+import { getPostByUserId } from '../index.js';
 
 function Profile() {
     const user=useSelector((state)=>state.user);
+    const {followerCount,followingCount}=useSelector((state)=>state.follow);
     const [posts, setPosts] = useState([]);
-    const [count, setCount] = useState({ countfollowers: 0, countfollowing: 0 });
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
-
+    const dispatch=useDispatch(null)
     useEffect(() => {
         const fetchPostsData = async () => {
             try {
@@ -30,9 +31,8 @@ function Profile() {
     useEffect(() => {
         const fetchCounts = async () => {
             try {
-                const countfollowers = await countFollowers(id);
-                const countfollowing = await countFollowing(id);
-                setCount({ countfollowers, countfollowing });
+                dispatch(countFollowers(id));
+                dispatch(countFollowing(id));
             } catch (error) {
                 console.error("Failed to fetch counts:", error);
             }
@@ -60,10 +60,10 @@ function Profile() {
                         </div>
                         <div className='flex md:flex-row mt-4 md:mt-0 gap-2 md:gap-4 items-center justify-between'>
                             <Link to={`/follows/followers/${user?._id}`}>
-                                <button className='btn btn-info'>{count.countfollowers} followers</button>
+                                <button className='btn btn-info'>{followerCount} followers</button>
                             </Link>
                             <Link to={`/follows/following/${user?._id}`}>
-                                <button className='btn btn-warning'>{count.countfollowing} following</button>
+                                <button className='btn btn-warning'>{followingCount} following</button>
                             </Link>
                             <Link to={`/chat/${user?._id}`}>
                                 <button className='btn btn-accent'>Chat</button>

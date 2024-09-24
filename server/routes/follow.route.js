@@ -6,10 +6,10 @@ const router = express.Router();
 
 router.post('/handleFollow', verifyJWT,createFollow);
 router.delete('/handleUnfollow', verifyJWT,removeFollow);
-router.get('/getFollowers/:userId',verifyJWT, getFollowers);
-router.get('/getFollowing/:userId',verifyJWT, getFollowing);
-router.get('/countFollowers/:userId',verifyJWT, countFollowers);
-router.get('/countFollowing/:userId',verifyJWT, countFollowing);
-router.get('/getFollowingOfCurrentUser/:userId',verifyJWT, getFollowingOfCurrentUser);
+router.get('/getFollowers/:id',verifyJWT, getFollowers);
+router.get('/getFollowing/:id',verifyJWT, getFollowing);
+router.get('/countFollowers/:id',verifyJWT, countFollowers);
+router.get('/countFollowing/:id',verifyJWT, countFollowing);
+router.get('/getFollowingOfCurrentUser',verifyJWT, getFollowingOfCurrentUser);
 
 export default router;

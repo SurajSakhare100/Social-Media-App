@@ -1,67 +1,54 @@
-import React, { useEffect, useState } from "react";
-import { getFollowers } from "../index.js"; // Adjust the import path as per your project structure
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import FollowBtn from "./FollowBtn";
-import { getCurrentUser } from '../index.js';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFollowers } from "../app/slices/followSlice.js";
 
 function Suggestion() {
-    const [follows, setFollows] = useState(null);
-    const [user, setUser] = useState(null);
- 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getCurrentUser();
-                setUser(userData);
-            } catch (error) {
-                console.error('Error fetching user or posts:', error);
-            }
-        };
+    const user = useSelector((state) => state.user); // Get the current logged-in user from Redux state
+    const followers = useSelector((state) => state.follow.followers); // Get followers from Redux state
+    const dispatch = useDispatch();
 
-        fetchUser();
-    }, []);
     useEffect(() => {
-        const fetchFollowsData = async () => {
-            try {
-                const data = await getFollowers(user?._id);
-                setFollows(data);
-            } catch (error) {
-                console.error(`Failed to fetch followers:`, error);
-            }
+        const fetchFollowsData = () => {
+            dispatch(fetchFollowers());
         };
 
         fetchFollowsData();
-    }, [user,setFollows,FollowBtn]);
+    }, [dispatch]);
+
     return (
         <div>
-            <h1 className="text-xl font-semibold bg-slate-300 py-2 px-4 rounded-lg">You can also follow them</h1>
-            {follows?.map((follows) => (
-                <div key={follows.followerId._id} className="flex items-center space-x-4 my-4 justify-between" >
+            <h1 className="text-xl font-semibold bg-slate-300 py-2 px-4 rounded-lg">
+                You can also follow them
+            </h1>
+            {followers?.map((follower) => (
+                <div key={follower._id} className="flex items-center space-x-4 my-4 justify-between">
                     <div className="flex gap-2">
-                    <Link
-                        tabIndex={0}
-                        role="button"
-                        className="btn btn-ghost btn-circle avatar"
-                        to={`/user/${follows.followerId._id}`}
-                    >
-                        <div className="w-18 h-18 rounded-full overflow-hidden">
-                            <img
-                                src={follows.followerId.profilePicture}
-                                alt={`${follows.followerId.profileName}`}
-                                className="w-full h-full object-cover"
-                            />
+                        <Link
+                            tabIndex={0}
+                            role="button"
+                            className="btn btn-ghost btn-circle avatar"
+                            to={`/user/${follower._id}`}
+                        >
+                            <div className="w-18 h-18 rounded-full overflow-hidden">
+                                <img
+                                    src={follower.profilePicture}
+                                    alt={follower.profileName}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </Link>
+                        <div>
+                            <h1 className="text-lg">{follower.profileName}</h1>
+                            <h3 className="text-sm">{follower.email}</h3>
                         </div>
-                    </Link>
-                    <div>
-                        <h1 className="text-lg">{follows.followerId.profileName}</h1>
-                        <h3 className="text-sm">{follows.followerId.email}</h3>
-                    </div>
                     </div>
                     <div>
                         <FollowBtn
-                            followingId={follows.followerId._id }
+                            followingId={follower._id}
                             followerId={user._id}
-                            isFollowing={follows.isFollowing}
+                            isFollowing={follower.isFollowing} // Ensure this is correct based on your API response
                         />
                     </div>
                 </div>

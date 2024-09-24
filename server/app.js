@@ -16,7 +16,6 @@ import { Server } from 'socket.io';
 
 const app = express();
 const clientURL ='http://localhost:5173';
-console.log(clientURL)
 app.use(cors({
   origin: clientURL,
   credentials: true,

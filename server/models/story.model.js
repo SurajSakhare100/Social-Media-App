@@ -11,17 +11,11 @@ const storySchema = new Schema(
       type: String,
       required: true,
     },
-    expirationTime: {
+    createdAt: {
       type: Date,
-      default: function() {
-        // Set expirationTime to 1 day from now
-        return new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day in milliseconds
-      },
-    },
-  },
-  {
-    timestamps: true,
-  }
+      default: Date.now,
+      expires: '24h', // Auto-delete story after 24 hours
+    },}
 );
 
 storySchema.index({ userId: 1 });

@@ -53,18 +53,21 @@ const fetchCommentsWithUserDetails = async (postId) => {
 
 // Create a comment
 const createComment = asyncHandler(async (req, res) => {
-  const { userComment  } = req.body;
-  const {postId}=req.params;
-  const userId=req.user._id
+  const { userComment } = req.body;
+  const { postId } = req.params;
+  const userId = req.user._id; // Assuming `req.user` is populated by authentication middleware
+
   // Validate input
   if (!userComment || !postId || !userId) {
     return res.status(400).json(new ApiResponse(400, null, "Missing required fields"));
   }
 
+  // Validate postId and userId
   if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json(new ApiResponse(400, null, "Invalid postId or userId"));
   }
 
+  // Create the comment
   const comment = await Comment.create({
     author: userId,
     postId,
@@ -75,6 +78,7 @@ const createComment = asyncHandler(async (req, res) => {
 });
 
 // Update a comment
+// Update a comment
 const updateComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   const { userComment } = req.body;
@@ -83,19 +87,24 @@ const updateComment = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
     return res.status(400).json(new ApiResponse(400, null, "Invalid Comment ID"));
   }
+  console.log(commentId)
+  // Find the comment by ID
+  const comment = await Comment.findById(commentId);
 
-  const updatedComment = await Comment.findByIdAndUpdate(
-    commentId,
-    { comment: userComment },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedComment) {
+  // Check if the comment exists
+  if (!comment) {
     return res.status(404).json(new ApiResponse(404, null, "Comment not found"));
   }
 
+  // Update the comment's content
+  comment.comment = userComment;
+
+  // Save the updated comment
+  const updatedComment = await comment.save();
+
   res.status(200).json(new ApiResponse(200, updatedComment, "Comment updated successfully"));
 });
+
 
 // Delete a comment
 const deleteComment = asyncHandler(async (req, res) => {
@@ -106,9 +115,11 @@ const deleteComment = asyncHandler(async (req, res) => {
     return res.status(400).json(new ApiResponse(400, null, "Invalid Comment ID"));
   }
 
+  // Delete the comment
   const deletedComment = await Comment.findByIdAndDelete(commentId);
 
-  if (!deletedComment) {
+  // Check if the comment exists
+  if (deletedComment !==null) {
     return res.status(404).json(new ApiResponse(404, null, "Comment not found"));
   }
 
