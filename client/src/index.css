@@ -23,3 +23,8 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
     -moz-appearance: textfield; /* Firefox */
 }
+
+/* styles.css or your main CSS file */
+.h-next {
+    height: calc(100vh - 180px);
+}

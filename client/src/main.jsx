@@ -17,6 +17,7 @@ import EmailVerificationForm from './pages/EmailVerificationForm.jsx';
 import { Provider } from 'react-redux';
 import store from './app/store/store.js';
 import UpdateProfile from './pages/UpdateProfile.jsx';
+import StoryPage from './pages/StoryPage.jsx';
 const router = createBrowserRouter([
   {
     path: '',
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: '/UpdateProfile',
         element: <UpdateProfile />
+      },
+      {
+        path: '/story/:id',
+        element: <StoryPage />
       }
 
     ],

@@ -9,7 +9,6 @@ function Follows() {
     const user = useSelector((state) => state.user); // Get the current logged-in user from Redux state
     const dispatch = useDispatch();
     const follows = useSelector((state) => state.follow); // Assume follows holds both followers and following data
-    console.log(follows);
 
     // Fetch follower or following data when 'id' or 'type' changes
     useEffect(() => {

@@ -6,6 +6,7 @@ import navLogo from '../../public/nav-logo.webp';
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser, logoutUser } from "../app/slices/userSlice.js";
+import { fetchFollowers } from "../app/slices/followSlice.js";
 
 function Navbar() {
     const [isSearchVisible, setIsSearchVisible] = useState(true);
@@ -35,7 +36,7 @@ function Navbar() {
     };
 
     return (
-        <div className="fixed top-0 z-10 w-full h-16 md:h-20 px-4 md:px-10 bg-white shadow-md dark:border-gray-50 border-1 border-b dark:bg-black dark:text-white">
+        <div className="fixed top-0 z-10 w-full md:h-20 px-4 md:px-10 bg-white shadow-md dark:border-gray-50 border-1 border-b dark:bg-black dark:text-white">
             <div className="w-full h-full flex items-center justify-between">
                 {/* Logo Section */}
                 <div className="flex-shrink-0">

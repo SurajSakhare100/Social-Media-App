@@ -67,7 +67,7 @@ const getFollowing = asyncHandler(async (req, res) => {
     const { id } = req.params; // Assuming the ID is passed as a route parameter
     const currentUserId = req.user._id;
 
-    const following = await Follow.find({ followerId: currentUserId }).populate('followingId', 'username email profilePicture');
+    const following = await Follow.find({ followerId: id }).populate('followingId', 'username email profilePicture');
 
     const userFollowing = await Follow.find({ followerId: currentUserId }).select('followingId');
     const userFollowingIds = userFollowing.map(follow => follow.followingId.toString());

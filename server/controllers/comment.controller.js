@@ -78,7 +78,6 @@ const createComment = asyncHandler(async (req, res) => {
 });
 
 // Update a comment
-// Update a comment
 const updateComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   const { userComment } = req.body;
@@ -87,7 +86,12 @@ const updateComment = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
     return res.status(400).json(new ApiResponse(400, null, "Invalid Comment ID"));
   }
-  console.log(commentId)
+
+  // Check if userComment is provided
+  if (!userComment) {
+    return res.status(400).json(new ApiResponse(400, null, "Comment content is required"));
+  }
+
   // Find the comment by ID
   const comment = await Comment.findById(commentId);
 
@@ -106,6 +110,7 @@ const updateComment = asyncHandler(async (req, res) => {
 });
 
 
+
 // Delete a comment
 const deleteComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
@@ -119,7 +124,7 @@ const deleteComment = asyncHandler(async (req, res) => {
   const deletedComment = await Comment.findByIdAndDelete(commentId);
 
   // Check if the comment exists
-  if (deletedComment !==null) {
+  if (!deletedComment) {
     return res.status(404).json(new ApiResponse(404, null, "Comment not found"));
   }
 

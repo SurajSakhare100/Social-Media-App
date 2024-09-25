@@ -1,17 +1,23 @@
-// Story.js
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { createStory, fetchStories, selectStories } from '../app/slices/storySlice';
+import { fetchFollowers } from '../app/slices/followSlice'; // Assuming you have a slice to handle follow
+import { Link } from 'react-router-dom';
 
 const AddStory = () => {
     const dispatch = useDispatch();
     const stories = useSelector(selectStories);
     const user = useSelector((state) => state.user);
+    const following = useSelector((state) => state.follow.following); // Get the following list from redux
     const [error, setError] = useState('');
-console.log(user)
+
+
+
     useEffect(() => {
-        dispatch(fetchStories()); // Fetch stories when the component mounts
-    }, [dispatch]);
+        // Dispatch the fetchStories action with the following_ids
+        dispatch(fetchStories());
+
+    }, []);
 
     const handleStoryUpload = async (event) => {
         const file = event.target.files[0];
@@ -20,7 +26,9 @@ console.log(user)
             formData.append('story', file); // Ensure this key matches what your backend expects
 
             try {
-                dispatch(createStory({ userId: user._id, formData })); // Await for the dispatch to finish
+                await dispatch(createStory({ userId: user._id, formData })); // Await for the dispatch to finish
+                setError(''); // Clear error if upload is successful
+                event.target.value = null; // Clear the input value after upload
             } catch (error) {
                 console.error('Error uploading story:', error);
                 setError('Failed to upload story. Please try again.');
@@ -55,14 +63,16 @@ console.log(user)
                 <p>No stories available.</p>
             ) : (
                 stories.map((story) => (
-                    <div key={story._id} className='flex flex-col items-center flex-wrap'>
-                        <img
-                            src={story.mediaUrl}
-                            alt="Story"
-                            className='w-20 h-20 rounded-full object-cover'
-                        />
-                        <p>Expires at: {new Date(story.expirationTime).toLocaleString()}</p>
-                    </div>
+                    <Link key={story._id} to={`/story/${story._id}`} className='flex flex-col items-center flex-wrap'>
+                        <div className="relative w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center">
+                            <img
+                                src={story.userId.profilePicture} // Adjust based on your API response structure
+                                alt="Story"
+                                className='w-20 h-20 rounded-full object-cover hover:scale-110 ease-in-out'
+                            />
+                        </div>
+                    </Link>
+
                 ))
             )}
         </div>

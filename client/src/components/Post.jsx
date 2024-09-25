@@ -143,8 +143,8 @@ function Post({ post }) {
             {/* Post Content */}
             <p>{postState.content}</p>
             {postState.post_image && (
-                <figure onClick={() => showPostImage(postState.post_image)} className="mt-2 w-full h-60 rounded-lg overflow-hidden cursor-pointer">
-                    <img src={postState.post_image} className="w-full h-full aspect-square object-cover" alt="Post visual content" />
+                <figure onClick={() => showPostImage(postState.post_image)} className="mt-2 w-full rounded-lg overflow-hidden cursor-pointer">
+                    <img src={postState.post_image} className="w-full aspect-square object-cover" alt="Post visual content" />
                 </figure>
             )}
 

@@ -7,39 +7,49 @@ function Comments({ postId, userId, userPicture }) {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingComment, setEditingComment] = useState("");
   const dispatch = useDispatch();
-  const post = useSelector((state) => state.posts.posts.find(p => p._id === postId)); 
-  // Get the specific post
-  useEffect(() => {
-    dispatch(fetchComments(postId));
-  }, [postId, dispatch]);
 
-  const handleComment = (e) => {
+  // Get the specific post and comments from Redux state
+  const post = useSelector((state) => state.posts.posts.find((p) => p._id === postId));
+  const comments = post?.comments?.[0]?.comments || []; // Default to empty array if comments are not found
+
+  
+  const handleComment = async (e) => {
     e.preventDefault();
     if (editingCommentId) {
-      dispatch(editComment({ postId, commentId: editingCommentId, comment: editingComment }));
+      await dispatch(editComment({ postId, commentId: editingCommentId, userComment: editingComment }));
       setEditingCommentId(null);
       setEditingComment("");
     } else {
-      dispatch(addComment({ postId, userComment }));
-      setUserComment(""); // Clear the input field
+      await dispatch(addComment({ postId, userComment }));
+      setUserComment(""); // Clear the input field after submission
     }
   };
-
-  const handleDeleteComment = (commentId) => {
-    dispatch(deleteComment({ postId, commentId }));
+  
+  const handleDeleteComment = async (commentId) => {
+    // if (window.confirm("Are you sure you want to delete this comment?")) {
+      await dispatch(deleteComment({ postId, commentId }));
+      dispatch(fetchComments(postId))
+    // }
   };
-
+  
   const startEditing = (commentId, comment) => {
     setEditingCommentId(commentId);
     setEditingComment(comment);
   };
+  /// Fetch comments when the component mounts
+  useEffect(() => {
+    const fetchCommentsData = async () => {
+      await dispatch(fetchComments(postId));
+    };
+    fetchCommentsData();
+  }, [postId, dispatch,userComment,editingComment,editingCommentId]);
 
   return (
     <div>
       {/* Comments list */}
       <div className="chat chat-start my-2 flex flex-col gap-4">
-        {post?.comments ? (
-          post.comments[0]?.comments.map((comment) => (
+        {comments.length > 0 ? (
+          comments.map((comment) => (
             <div key={comment._id} className={`flex gap-2 ${comment.author === userId ? "self-end" : ""}`}>
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
@@ -77,6 +87,7 @@ function Comments({ postId, userId, userPicture }) {
             value={editingCommentId ? editingComment : userComment}
             onChange={(e) => editingCommentId ? setEditingComment(e.target.value) : setUserComment(e.target.value)}
             className="input input-bordered w-full"
+            required
           />
           <button type="submit" className="btn btn-primary">{editingCommentId ? "Update" : "Comment"}</button>
         </form>

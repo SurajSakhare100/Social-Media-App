@@ -5,7 +5,6 @@ import { follow, unfollow } from '../index.js';
 function FollowBtn({ followerId, followingId, initialIsFollowing }) {
     // Get the current logged-in user from Redux state
     const user = useSelector((state) => state.user);
-
     // State to manage if the current user is following the other user
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
 

@@ -4,11 +4,12 @@ import profile from "/profile.png";
 import { FaEdit } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { countFollowers, countFollowing } from '../app/slices/followSlice.js';
-import { getPostByUserId } from '../index.js';
+import { getPostByUserId, getUserById } from '../index.js';
 
 function Profile() {
-    const user=useSelector((state)=>state.user);
+    // const user=useSelector((state)=>state.user);
     const {followerCount,followingCount}=useSelector((state)=>state.follow);
+    const [user, setuser] = useState([]);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
@@ -26,6 +27,23 @@ function Profile() {
         };
 
         fetchPostsData();
+    }, [id]);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true)
+            try {
+                const post = await getUserById(id);
+                setuser(post);
+                setLoading(false);
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+                setLoading(false);
+            }finally{
+                setLoading(false)
+            }
+        };
+
+        fetchData();
     }, [id]);
 
     useEffect(() => {

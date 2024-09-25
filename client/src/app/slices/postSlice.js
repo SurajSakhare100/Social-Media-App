@@ -62,8 +62,9 @@ export const fetchComments = createAsyncThunk('posts/fetchComments', async (post
 });
 
 // Edit a comment (Update)
-export const editComment = createAsyncThunk('posts/editComment', async ({ postId, commentId, comment }) => {
-  const response = await axiosInstance.put(`${commenturl}/${postId}/${commentId}`, { comment });
+export const editComment = createAsyncThunk('posts/editComment', async ({ postId, commentId, userComment }) => {
+  console.log(userComment)
+  const response = await axiosInstance.put(`${commenturl}/${postId}/${commentId}`, { userComment });
   return response.data.data;
 });
 
