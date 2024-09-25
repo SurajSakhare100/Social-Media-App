@@ -10,15 +10,15 @@ const likePost = asyncHandler( async (req, res) => {
   try {
     // Check if user_id exists
     const {id}=req.user
-    const { post_id } = req.body;
+    const { postId } = req.body;
     const user_id=id;
-    console.log({post_id,user_id})
+    console.log({postId,user_id})
     // Check if the user has already liked the post
-    const existingLike = await Like.findOne({ post: post_id, user: user_id });
+    const existingLike = await Like.findOne({ post: postId, user: user_id });
     if (existingLike) return res.status(400).json({ message: "Already liked" });
 
     // Create a new like
-    const like = new Like({ post: post_id, user: user_id });
+    const like = new Like({ post: postId, user: user_id });
     like.isliked=true;
     await like.save();
 
@@ -36,15 +36,15 @@ const unlikePost=asyncHandler(async(req,res)=>{
   try {
    // Check if user_id exists
    const {id}=req.user
-   const { post_id } = req.body;
+   const { postId } = req.body;
    const user_id=id;
-   console.log({post_id,user_id})
+   console.log({postId,user_id})
     // Find and delete the like
-    const like = await Like.findOneAndDelete({ post: post_id, user: user_id });
+    const like = await Like.findOneAndDelete({ post: postId, user: user_id });
     if (!like) return res.status(400).json({ message: 'Like not found' });
 
     // Decrement the likes count in the post
-    await Post.findByIdAndUpdate(post_id, { $inc: { likesCount: -1 } });
+    await Post.findByIdAndUpdate(postId, { $inc: { likesCount: -1 } });
 
     res.status(200).json({ message: 'Post unliked' });
 } catch (error) {

@@ -2,15 +2,29 @@ import dotenv from 'dotenv';
 import connectDB from './DB/index.js';
 import app from './app.js';
 import http from 'http';
+import { Server } from 'socket.io';
+import { initializeSockets } from './socket.js';
 
 dotenv.config({ path: './.env' });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000; // Use port 3000
 
 // Create HTTP server
 const server = http.createServer(app);
 
-// Connect to MongoDB and start the server
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',  // Frontend URL
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
+
+// Initialize socket handlers
+initializeSockets(io);
+
+// Start server
 connectDB()
   .then(() => {
     server.listen(port, () => {

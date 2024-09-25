@@ -8,6 +8,7 @@ const StoryPage = () => {
     const { id } = useParams(); // Get story ID from URL
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const user=useSelector((state)=>state.user)
     const stories = useSelector(selectStories); // Select all stories
     const story = useSelector(selectCurrentStory); // Select the current story
     const [loading, setLoading] = useState(true);
@@ -68,12 +69,15 @@ const StoryPage = () => {
                             <h3 className="text-sm text-gray-300">{story.userId.profileName}</h3>
                         </div>
                     </div>
-                    <button
+                    {
+                        story.userId._id==user._id?<button
                         onClick={handleDeleteStory}
                         className="bg-red-500 text-white px-3 py-1 rounded-full shadow hover:bg-red-600"
                     >
                         Delete
-                    </button>
+                    </button>:""
+                    }
+                    
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between p-4 bg-gray-800 bg-opacity-50">
                     <button

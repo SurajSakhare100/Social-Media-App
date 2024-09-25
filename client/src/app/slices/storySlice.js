@@ -51,6 +51,7 @@ export const updateStory = createAsyncThunk(
 export const deleteStory = createAsyncThunk(
   "stories/deleteStory",
   async ( id ) => {
+    
     await axiosInstance.delete(`${storyUrl}/${id}`);
     return storyId; // Return the ID of the deleted story
   }

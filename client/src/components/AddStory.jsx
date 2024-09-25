@@ -15,9 +15,10 @@ const AddStory = () => {
 
     useEffect(() => {
         // Dispatch the fetchStories action with the following_ids
+        if (!user.isAuthenticated) {
         dispatch(fetchStories());
-
-    }, []);
+        }
+    }, [dispatch, user.isAuthenticated]);
 
     const handleStoryUpload = async (event) => {
         const file = event.target.files[0];

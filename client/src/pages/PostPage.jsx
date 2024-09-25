@@ -6,10 +6,12 @@ import Post from '../components/Post.jsx';
 function PostPage() {
     const dispatch = useDispatch();
     const posts = useSelector((state) => state.posts.posts);
-
+    const user=useSelector((state) => state.user);
     useEffect(() => {
-        dispatch(fetchPosts());
-    }, [dispatch]);
+        if (!user.isAuthenticated) {
+            dispatch(fetchPosts());
+        }
+    }, [dispatch, user.isAuthenticated]);
 
     return (
         <div className="w-full">

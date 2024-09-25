@@ -1,5 +1,5 @@
 import Story from "../models/story.model.js";
-import { uploadOnCloudinary } from "../utils/cloudnary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import Follow from "../models/follow.model.js";
@@ -95,21 +95,30 @@ const getStoryById = async (req, res) => {
 const deleteStory = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedStory = await Story.findByIdAndDelete(id);
+    const userId = req.user._id;
 
-    if (!deletedStory) {
-      return res
-        .status(404)
-        .json(new ApiError(404, "Story not found"));
+    // Find the story by ID
+    const story = await Story.findById(id);
+
+    // If the story does not exist, return a 404 error
+    if (!story) {
+      return res.status(404).json({ success: false, message: "Story not found" });
     }
 
-    res
-      .status(200)
-      .json(new ApiResponse(200, {}, "Story deleted successfully"));
+    // Check if the story belongs to the user making the request
+    if (story.userId.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this story" });
+    }
+
+    // Delete the story
+    await Story.findByIdAndDelete(id);
+
+    res.status(200).json({ success: true, message: "Story deleted successfully" });
   } catch (error) {
     console.error("Error deleting story:", error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
 
 export { createStory, getStories, deleteStory ,getStoryById};
