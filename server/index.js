@@ -11,11 +11,11 @@ const port = process.env.PORT || 3000; // Use port 3000
 
 // Create HTTP server
 const server = http.createServer(app);
-
+const clientURL = process.env.CLIENT_URL
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',  // Frontend URL
+    origin: clientURL,  // Frontend URL
     methods: ['GET', 'POST'],
     credentials: true,
   },
