@@ -1,30 +1,45 @@
-// AddStory.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { createStory, fetchStories, selectStories } from '../app/slices/storySlice';
+import { fetchFollowers } from '../app/slices/followSlice'; // Assuming you have a slice to handle follow
 import { Link } from 'react-router-dom';
 
 const AddStory = () => {
-    const [stories, setStories] = useState([]);
+    const dispatch = useDispatch();
+    const stories = useSelector(selectStories);
+    const user = useSelector((state) => state.user);
+    const following = useSelector((state) => state.follow.following); // Get the following list from redux
     const [error, setError] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+
+
 
     useEffect(() => {
-        // Fetch stories from your API
-        const fetchStories = async () => {
+        // Dispatch the fetchStories action with the following_ids
+        if (!user.isAuthenticated) {
+        dispatch(fetchStories());
+        }
+    }, [dispatch, user.isAuthenticated]);
+
+
+    const handleStoryUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('story', file);
+    
+            setIsUploading(true);
             try {
-                const response = await fetch('/api/stories'); // Replace with your API endpoint
-                const data = await response.json();
-                setStories(data);
-            } catch (err) {
-                setError('Failed to load stories');
+                await dispatch(createStory({ userId: user._id, formData }));
+                setError('');
+                event.target.value = null;
+            } catch (error) {
+                setError('Failed to upload story. Please try again.');
+            } finally {
+                setIsUploading(false);
             }
-        };
-        fetchStories();
-    }, []);
-
-    const handleStoryUpload = (e) => {
-        // Handle story upload logic here
+        }
     };
-
-    // Group stories by user
     const groupedStories = stories.reduce((acc, story) => {
         const userId = story.userId._id;
         if (!acc[userId]) {
@@ -33,14 +48,22 @@ const AddStory = () => {
         acc[userId].push(story);
         return acc;
     }, {});
-
     return (
         <div className='flex gap-4 items-center overflow-y-auto'>
             <div className='flex flex-col'>
-                <label htmlFor="createStory" className='w-20 h-20 bg-white rounded-full px-2 py-4 flex items-center justify-center cursor-pointer'>
+                <label
+                    htmlFor="createStory"
+                    className='w-20 h-20 bg-white rounded-full px-2 py-4 flex items-center justify-center cursor-pointer'
+                >
                     +
                 </label>
-                <input id="createStory" name="createStory" type="file" className='hidden' onChange={handleStoryUpload} />
+                <input
+                    id="createStory"
+                    name="createStory"
+                    type="file"
+                    className='hidden'
+                    onChange={handleStoryUpload}
+                />
             </div>
 
             {error && <p className="text-red-500">{error}</p>}
