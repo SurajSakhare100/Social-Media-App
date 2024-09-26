@@ -13,6 +13,7 @@ const StoryPage = () => {
     const story = useSelector(selectCurrentStory); // Select the current story
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
     useEffect(() => {
         const fetchStory = async () => {
@@ -29,13 +30,16 @@ const StoryPage = () => {
     }, [dispatch, id]);
 
     const handleDeleteStory = async () => {
-        try {
-            await dispatch(deleteStory(id)); // Delete story
-            // navigate('/'); // Redirect after deletion
-        } catch (err) {
-            setError('Failed to delete story.');
+        if (window.confirm("Are you sure you want to delete this story?")) {
+            try {
+                await dispatch(deleteStory(id));
+                navigate('/'); // Redirect after deletion
+            } catch (err) {
+                setError('Failed to delete story.');
+            }
         }
     };
+    
 
     const handleNextStory = () => {
         const currentIndex = stories.findIndex(story => story._id === id);
@@ -60,12 +64,12 @@ const StoryPage = () => {
     return (
         <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <div className="relative mt-14 w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
-                <img src={story.mediaUrl} alt="Story" className="h-next mt-16 w-full object-cover" />
+                <img src={stories[currentStoryIndex].mediaUrl} alt="Story" className="h-next mt-16 w-full object-cover" />
                 <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between  bg-black">
                     <div className="flex items-center gap-4">
                         <img src={story.userId.profilePicture} alt="" className="w-12 h-12 rounded-full border-2 border-white" />
                         <div>
-                            <h2 className="text-white font-semibold">{story.userId.username}</h2>
+                            <h2 className="text-white font-semibold">{stories[currentStoryIndex].userId.username}</h2>
                             <h3 className="text-sm text-gray-300">{story.userId.profileName}</h3>
                         </div>
                     </div>

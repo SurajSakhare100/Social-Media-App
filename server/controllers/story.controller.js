@@ -63,10 +63,20 @@ const getStories = async (req, res) => {
     const stories = await Story.find({
       userId: { $in: followingIdsArray },
     }).populate("userId", "username profileName profilePicture");
-
+    const groupedStories = stories.reduce((acc, story) => {
+      const userId = story.userId._id.toString();
+      if (!acc[userId]) {
+          acc[userId] = {
+              userId: story.userId,
+              stories: [],
+          };
+      }
+      acc[userId].stories.push(story);
+      return acc;
+  }, {});
     res
       .status(200)
-      .json(new ApiResponse(200, stories, "Stories fetched successfully"));
+      .json(new ApiResponse(200, groupedStories, "Stories fetched successfully"));
   } catch (error) {
     console.error("Error fetching stories:", error);
     res.status(500).json({ error: "Failed to fetch stories" });
