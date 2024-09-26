@@ -12,7 +12,7 @@ import chatRouter from './routes/chat.route.js';
 import storyRouter from './routes/story.route.js';
 
 const app = express();
-const clientURL = 'http://localhost:5173';
+const clientURL = process.env.CLIENT_URL
 
 // Middleware
 app.use(cors({
