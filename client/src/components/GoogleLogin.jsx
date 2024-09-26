@@ -7,8 +7,7 @@ function GoogleLogin() {
     const responseGoogle = async (authResult) => {
         try {
             const url = "http://localhost:3000";
-            const data = await axios.get(url + `/auth/google/login?code=${authResult.code}`);
-            console.log(data);
+            const data = await axios.get(url + `/auth/google/login?code=${authResult.code}`,{withCredentials:true});
         } catch (error) {
             console.log('Google Login Error:', error);
         }

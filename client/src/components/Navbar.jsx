@@ -6,8 +6,7 @@ import navLogo from '../../public/nav-logo.webp';
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser, logoutUser } from "../app/slices/userSlice.js";
-import { fetchFollowers } from "../app/slices/followSlice.js";
-
+import { MdOutlineMessage } from "react-icons/md";
 function Navbar() {
     const [isSearchVisible, setIsSearchVisible] = useState(true);
     const user = useSelector((state) => state.user);
@@ -19,12 +18,7 @@ function Navbar() {
             dispatch(fetchCurrentUser());
         }
     }, [dispatch, user.isAuthenticated]);
-    useEffect(() => {
-        // Redirect to login if the user is not authenticated
-        if (user.status === 'failed' && !user.isAuthenticated) {
-            navigate('/login');
-        }
-    }, [user.isAuthenticated,user.status, navigate]);
+    
 
     const logoutUserBtn = async () => {
         try {
@@ -69,7 +63,7 @@ function Navbar() {
                     <div className="flex items-center gap-4">
                         <button className="btn btn-ghost btn-circle hidden md:block">
                             <Link to={`/mychat/${user?._id}`} className="indicator">
-                                <FaMouse/>
+                                <MdOutlineMessage  className="text-xl"/>
                                 <span className="badge badge-xs badge-primary indicator-item"></span>
                             </Link>
                         </button>

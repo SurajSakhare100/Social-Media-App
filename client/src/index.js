@@ -113,9 +113,8 @@ const unlikePost = async (postId, userId) => {
 
 
 // User-related functions
-const registerUser = async (user) => {
+const registerUser = async (formData) => {
   try {
-    const formData = createFormData(user);
     const response = await axiosInstance.post(`${url}/api/v1/user/registerUser`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",

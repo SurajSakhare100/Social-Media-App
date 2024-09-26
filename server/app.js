@@ -33,7 +33,7 @@ app.use('/api/v1/like', likeRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/follow', followRouter);
 app.use('/api/v1/story', storyRouter);
-app.use('/email', EmailRouter);
+app.use('/api/v1/email', EmailRouter);
 
 // Error handling middleware (should be last)
 app.use((err, req, res, next) => {

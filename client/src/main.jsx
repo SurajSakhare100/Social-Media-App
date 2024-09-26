@@ -11,7 +11,6 @@ import Profile from './pages/Profile.jsx';
 import Follows from './pages/Follows.jsx';
 import ChatBox from './pages/ChatBox.jsx';
 import ChatDashBoard from './pages/ChatDashBoard.jsx';
-import GoogleLogin from './components/GoogleLogin.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import EmailVerificationForm from './pages/EmailVerificationForm.jsx';
 import { Provider } from 'react-redux';

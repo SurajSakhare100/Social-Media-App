@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import profile from "/profile.png";
 import { FaEdit } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,16 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
     const dispatch=useDispatch(null)
+
+    const currentuser = useSelector((state) => state.user);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Redirect to login if the user is not authenticated
+        if (currentuser.status === 'failed' && !currentuser.isAuthenticated) {
+            navigate('/login');
+        }
+    }, [currentuser.isAuthenticated, currentuser.status, navigate]);
     useEffect(() => {
         const fetchPostsData = async () => {
             try {

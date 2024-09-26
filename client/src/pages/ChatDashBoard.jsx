@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getChatUser } from '..';
+import { useSelector } from 'react-redux';
 
 function ChatDashBoard() {
     const [chats, setChat] = useState([]);
@@ -17,6 +18,15 @@ function ChatDashBoard() {
         }
         fetchData();
     }, [user]);
+    const currentuser = useSelector((state) => state.user);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Redirect to login if the user is not authenticated
+        if (currentuser.status === 'failed' && !currentuser.isAuthenticated) {
+            navigate('/login');
+        }
+    }, [currentuser.isAuthenticated, currentuser.status, navigate]);
     return (
         <div className="h-full pt-20 md:pt-24 bg-[#F4F2EE]">
             <div className="flex flex-col p-4">

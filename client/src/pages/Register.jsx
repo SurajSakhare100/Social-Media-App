@@ -1,37 +1,59 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { registerUser } from "../index.js";
 import axios from "axios";
 import GoogleLogin from "../components/GoogleLogin.jsx";
+
 function Register() {
   const [username, setUsername] = useState('');
+  const [profileName, setProfileName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [avatar, setAvatar] = useState('');
+  const [locationParam, setLocationParam] = useState(''); // New state for location
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const emailFromVerification = queryParams.get('email') ? window.atob(queryParams.get('email')) : '';
+  // Pre-fill the email if it's provided via the query parameter
+  useEffect(() => {
+     if(emailFromVerification===""){
+     setTimeout(() => {
+      navigate('/verify/email');
+     }, 200);
+     }
+      if (emailFromVerification) {
+          setEmail(emailFromVerification);
+      }
+  }, [emailFromVerification]);
+
   const handleFileChange = (e) => {
     setAvatar(e.target.files[0]);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user= await registerUser({
-        username,
-        email,
-        password,
-        profilePic:avatar,
-      });
-      navigate('/login');
+      // Register user with additional details
+      const formData = new FormData();
+      formData.append("email", email);  
+      formData.append("username", username);
+      formData.append("profileName", profileName);
+      formData.append("password", password);
+      formData.append("profilePicture", avatar);
+      formData.append("location", locationParam); // Add location to form data
+      
+      await registerUser(formData);
+      // navigate('/login');
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  
-  
   return (
     <>
-      <div className=" min-h-full px-6 py-12 lg:px-8">
+      <div className="min-h-full px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-4xl font-bold leading-9 tracking-tight text-black dark:text-white">
             Register
@@ -40,24 +62,45 @@ function Register() {
 
         <div className="text-black sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && <div className="text-red-500 text-sm">{error}</div>}
 
             <div>
               <label
-                htmlFor="username"
+                htmlFor="profileName"
                 className="block text-sm font-medium leading-6 dark:text-white"
               >
                 Full Name
               </label>
               <div className="mt-2">
                 <input
+                  id="profileName"
+                  name="profileName"
+                  type="text"
+                  autoComplete="profileName"
+                  required
+                  onChange={(e) => setProfileName(e.target.value)}
+                  placeholder="johndev123"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 dark:text-white"
+              >
+                User Name
+              </label>
+              <div className="mt-2">
+                <input
                   id="username"
                   name="username"
-                  type="username"
+                  type="text"
                   autoComplete="username"
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="John Dev"
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -74,12 +117,12 @@ function Register() {
                   id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
+                  value={emailFromVerification}
                   required
                   placeholder="john123@gmail.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
-                />
+                  className="w-full p-2 mb-4  rounded focus:outline-none focus:ring-2 py-1.5  bg-gray-100  border-black cursor-not-allowed
+                  "
+                  disabled={true} />
               </div>
             </div>
 
@@ -109,13 +152,14 @@ function Register() {
                   required
                   placeholder="******"
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
+
             <div>
               <label
-                htmlFor="email"
+                htmlFor="avatar"
                 className="block text-sm font-medium leading-6 dark:text-white"
               >
                 Add Avatar
@@ -127,7 +171,7 @@ function Register() {
                   type="file"
                   required
                   onChange={handleFileChange}
-                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6"
+                  className="pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -135,19 +179,16 @@ function Register() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md font-bold dark:bg-white dark:hover:bg-slate-500 bg-slate-700 px-3 py-1.5 text-sm  leading-6 dark:text-black text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md font-bold dark:bg-white dark:hover:bg-slate-500 bg-slate-700 px-3 py-1.5 text-sm leading-6 dark:text-black text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Register
               </button>
             </div>
-            <div>
-
-            </div>
           </form>
-          <h1 className='text-lg text-center mb-2 font-semibold'>Or</h1>
-          <GoogleLogin/>
+          <h1 className="text-lg text-center mb-2 font-semibold">Or</h1>
+          <GoogleLogin />
           <p className="mt-10 text-center text-sm text-gray-500">
-            Already have an account? {" "}
+            Already have an account?{" "}
             <Link
               to={"/login"}
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"

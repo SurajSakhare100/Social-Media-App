@@ -63,7 +63,7 @@ const AddStory = () => {
             {stories.length === 0 ? (
                 <p>No stories available.</p>
             ) : (
-                stories.map((story) => (
+                stories?.map((story) => (
                     <Link key={story._id} to={`/story/${story._id}`} className='flex flex-col items-center flex-wrap'>
                         <div className="relative w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center">
                             <img

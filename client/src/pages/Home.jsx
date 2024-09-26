@@ -2,14 +2,21 @@ import React, { useEffect, useState } from 'react';
 import CreatePost from '../components/CreatePost';
 import Suggestion from '../components/Suggestion';
 import Profile from "/profile.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PostPage from './PostPage';
 import AddStory from '../components/AddStory';
 
 function Home() {
     const user = useSelector((state) => state.user);
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        // Redirect to login if the user is not authenticated
+        if (user.status === 'failed' && !user.isAuthenticated) {
+            navigate('/login');
+        }
+    }, [user.isAuthenticated, user.status, navigate]);
     return (
         <div className='w-full h-full pt-20 pb-10 md:pt-24 overflow-y-auto flex flex-col md:flex-row  px-4 md:px-20 gap-6 bg-[#F4F2EE] dark:bg-black dark:text-white' >
 

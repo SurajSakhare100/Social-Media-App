@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import { options } from '../utils/constant.js';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
@@ -40,14 +41,21 @@ export const googleLogin = async (req, res) => {
         let user = await User.findOne({ email: userInfo.email });
 
         if (!user) {
+            // Validate userInfo data
+            if (!userInfo.name || !userInfo.email) {
+                return res.status(400).json({ message: 'User information is incomplete.' });
+            }
+
             // If user doesn't exist, create a new user
             user = await User.create({
                 username: userInfo.name, // Assuming Google name as username
                 email: userInfo.email,
                 profileName: userInfo.name,
                 profilePicture: userInfo.picture,
-                password: 'googlePassword', 
+                password: hashPassword('googlePassword'), // Hash the password
             });
+
+            console.log('New user created:', user.email);
         }
 
         // Generate tokens
@@ -59,9 +67,13 @@ export const googleLogin = async (req, res) => {
         await user.save();
 
         // Send the JWT token back to the client
-        res.status(200).json({ accessToken, refreshToken, user });
+        res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { ...user}, "Logged in successfully"));
     } catch (error) {
         console.error('Google Login Error:', error.message);
         res.status(500).json({ message: 'Authentication failed.' });
     }
 };
+

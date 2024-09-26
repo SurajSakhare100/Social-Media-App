@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../app/slices/userSlice.js';
+import GoogleLogin from '../components/GoogleLogin.jsx';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null); // Local state for error messages
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
-    const dispatch=useDispatch(null)
+    const dispatch = useDispatch(null)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null); // Clear previous errors
         try {
-            dispatch(loginUser({email,password}))
-            if(!user.isAuthenticated){
+            dispatch(loginUser({ email, password }))
+            if (!user.isAuthenticated) {
                 navigate('/')
             }
             navigate('/')
@@ -90,8 +91,10 @@ function Login() {
                             Log In
                         </button>
                     </div>
-                </form>
 
+                </form>
+                <h1 className="text-lg text-center mb-2 font-semibold">Or</h1>
+                <GoogleLogin />
                 <p className="mt-10 text-center text-sm text-gray-500">
                     Not Registered yet?{' '}
                     <Link to="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
