@@ -75,9 +75,9 @@ function Profile() {
 
     return (
         <div className='w-full h-full overflow-y-auto flex flex-col items-center  pt-20 md:pt-24 bg-[#F4F2EE]'>
-            <div className='w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 border-b'>
                 {/* Profile Header */}
-                <div className='mb-8'>
+                <div className='mb-8 border-b border-black py-2'>
                     <div className='flex flex-row items-center justify-between gap-2 md:gap-6'>
                         <div className='flex-shrink-0 pt-4 md:pt-0 w-fit self-center'>
                             <img
@@ -98,7 +98,7 @@ function Profile() {
                             </Link>
                         </div>
                     </div>
-                    <div className='mt-4'>
+                    <div className='mt-2'>
                         <div className='md:text-left'>
                             <h1 className='text-2xl font-semibold'>{user?.username}</h1>
                             <h2 className='text-md text-gray-600'>{user?.email}</h2>
@@ -116,10 +116,12 @@ function Profile() {
                             </p>
                         </div>
                     </div>
-                    <div className='w-full mt-2'>
+                    {
+                        currentuser._id==user._id?<div className='w-full mt-2'>
                         <Link className='w-full btn btn-active text-xl' to={'/UpdateProfile'}>Edit Profile <span className='pt-0.5'><FaEdit/></span></Link>
                         
-                    </div>
+                    </div>:''
+                    }
                 </div>
 
 

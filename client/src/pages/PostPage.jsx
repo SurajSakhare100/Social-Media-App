@@ -8,11 +8,10 @@ function PostPage() {
     const posts = useSelector((state) => state.posts.posts);
     const user=useSelector((state) => state.user);
     useEffect(() => {
-        if (!user.isAuthenticated) {
+        if (user.isAuthenticated) {
             dispatch(fetchPosts());
         }
     }, [dispatch, user.isAuthenticated]);
-
     return (
         <div className="w-full">
             {posts.length > 0 ? (

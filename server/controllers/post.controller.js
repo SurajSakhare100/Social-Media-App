@@ -62,7 +62,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
         },
       },
       {
-        $unwind: "$creatorDetails", // Ensures creator details are returned properly
+        $unwind: "$creatorDetails", // Ensure we only return one creator detail
       },
       {
         $lookup: {
@@ -74,25 +74,26 @@ const getAllPosts = asyncHandler(async (req, res) => {
       },
       {
         $addFields: {
-          likeCount: { $size: "$likes" }, // Count the total number of likes
-          liked: {
-            $in: [userId, "$likes.user"], // Check if the user liked the post
-          },
+          likeCount: { $size: "$likes" }, // Count total likes
+          liked: { $in: [userId, "$likes.user"] }, // Check if the user liked this post
         },
       },
       {
         $project: {
-          _id: 1,
-          content: 1,
-          post_image: 1,
-          creatorDetails: 1,
-          likeCount: 1,
-          liked: 1,
-          createdAt: 1, // Keep this field for sorting
+          _id: 1, // Post ID
+          content: 1, // Post content
+          post_image: 1, // Image associated with the post
+          "creatorDetails.username": 1, // Only include the creator's username
+          "creatorDetails.email": 1, // Only include the creator's username
+          "creatorDetails.profilePicture": 1, // Include the creator's profile picture
+          "creatorDetails.profileName": 1, // Include the creator's profile picture
+          likeCount: 1, // Number of likes
+          liked: 1, // Whether the current user has liked the post
+          createdAt: 1, // Post creation time for sorting
         },
       },
       {
-        $sort: { createdAt: -1 }, // Sort by most recent posts
+        $sort: { createdAt: -1 }, // Sort posts by newest first
       },
     ]);
 
@@ -106,6 +107,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 // Read Posts by User ID
