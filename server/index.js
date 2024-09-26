@@ -7,25 +7,25 @@ import { initializeSockets } from './socket.js';
 
 dotenv.config({ path: './.env' });
 
-const port = process.env.PORT || 3000; // Use port 3000
+const port = process.env.PORT || 3000;  // Use port from .env or default to 3000
 
 // Create HTTP server
 const server = http.createServer(app);
 const clientURL = process.env.CLIENT_URL || 'https://itsdevnet.vercel.app';
 
-// Initialize Socket.IO
+// Initialize Socket.IO with dynamic CORS origin
 const io = new Server(server, {
   cors: {
-    origin: clientURL,  // Frontend URL
+    origin: clientURL,  // Use the clientURL from .env or default
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: true,  // Allow credentials (cookies, etc.)
   },
 });
 
 // Initialize socket handlers
 initializeSockets(io);
 
-// Start server
+// Start the server and connect to MongoDB
 connectDB()
   .then(() => {
     server.listen(port, () => {
