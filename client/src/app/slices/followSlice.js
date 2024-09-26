@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { base } from '../../index.js';
 
 // API URLs
-const follow_url = 'http://localhost:3000/api/v1/follow';
+const follow_url = `${base}/api/v1/follow`;
 
 // Axios instance for requests
 const axiosInstance = axios.create({

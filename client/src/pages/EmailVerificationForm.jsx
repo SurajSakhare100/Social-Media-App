@@ -22,7 +22,7 @@ function EmailVerificationForm() {
         setEmailValid(true);
         setIsSendingCode(true);
         try {
-            await axios.post('http://localhost:3000/api/v1/email/send-code', { email });
+            await axios.post(`${base}/api/v1/email/send-code`, { email });
             setMessage('Verification code sent to your email!');
             setIsCodeSent(true);
         } catch (error) {
@@ -34,7 +34,7 @@ function EmailVerificationForm() {
 
     const handleVerifyCode = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/email/verify-code', { email, code: code.join('') });
+            const response = await axios.post(`${base}/api/v1/email/verify-code`, { email, code: code.join('') });
             setMessage(response.data.message);
             setIsVerified(true);
             setCode(Array(6).fill('')); // Clear the code inputs after successful verification

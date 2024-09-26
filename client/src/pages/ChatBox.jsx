@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getChat, getUserById, sendChat } from '../index.js';
+import { base, getChat, getUserById, sendChat } from '../index.js';
 import Chat from '../components/Chat.jsx';
 
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000", {
+const socket = io(base, {
   withCredentials: true,  // Support cross-origin credentials
 });
 

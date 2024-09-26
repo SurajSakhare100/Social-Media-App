@@ -2,12 +2,13 @@ import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { FaGoogle } from 'react-icons/fa';
+import { base } from '../index.js';
 
 function GoogleLogin() {
     const responseGoogle = async (authResult) => {
         try {
-            const url = "http://localhost:3000";
-            const data = await axios.get(url + `/auth/google/login?code=${authResult.code}`,{withCredentials:true});
+            
+            const data = await axios.get(base + `/auth/google/login?code=${authResult.code}`,{withCredentials:true});
         } catch (error) {
             console.log('Google Login Error:', error);
         }

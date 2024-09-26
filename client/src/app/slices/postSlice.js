@@ -1,9 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const posturl = "http://localhost:3000/api/v1/posts";
-const likeurl = "http://localhost:3000/api/v1/like";
-const commenturl = "http://localhost:3000/api/v1/comments";
+import { base } from '../../index.js';
+
+// API URLs
+const posturl = `${base}/api/v1/posts`;
+const likeurl = `${base}/api/v1/like`;
+const commenturl = `${base}/api/v1/comments`;
 
 // Axios instance for requests
 const axiosInstance = axios.create({

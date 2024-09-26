@@ -1,8 +1,9 @@
 // storySlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { base } from "../../index.js";
 
-const storyUrl = "http://localhost:3000/api/v1/story";
+const storyUrl =  `${base}/api/v1/story`;
 
 // Axios instance for requests
 const axiosInstance = axios.create({

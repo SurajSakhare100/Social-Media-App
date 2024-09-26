@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { base } from "../../index.js";
 
-const url = "http://localhost:3000/api/v1/";
+const url = `${base}/api/v1/`;
 const initialState = {
   _id: null,
   username: "",
@@ -81,11 +82,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     updateUserProfile(state, action) {
-      const { name, profilePicture, bio } = action.payload;
-      state.name = name;
+      const { username, profilePicture, bio } = action.payload;
+      state.username = username;
       state.profilePicture = profilePicture;
       state.bio = bio;
     },
+    
   },
   extraReducers: (builder) => {
     // Handling fetchCurrentUser
