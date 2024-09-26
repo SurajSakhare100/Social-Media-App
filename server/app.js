@@ -12,7 +12,7 @@ import chatRouter from './routes/chat.route.js';
 import storyRouter from './routes/story.route.js';
 
 const app = express();
-const clientURL = process.env.CLIENT_URL
+const clientURL = process.env.CLIENT_URL || 'https://itsdevnet.vercel.app';
 
 // Middleware
 app.use(cors({

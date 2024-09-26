@@ -11,7 +11,8 @@ const port = process.env.PORT || 3000; // Use port 3000
 
 // Create HTTP server
 const server = http.createServer(app);
-const clientURL = process.env.CLIENT_URL
+const clientURL = process.env.CLIENT_URL || 'https://itsdevnet.vercel.app';
+
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
