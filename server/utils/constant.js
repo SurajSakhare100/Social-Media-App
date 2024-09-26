@@ -1,5 +1,5 @@
 export const DB_NAME = "socialdb";
-export const cookieOptions = {
+export const options = {
     httpOnly: true,
     secure: true,  // Ensure this is true for HTTPS
     sameSite: 'None',  // Required for cross-site cookies
