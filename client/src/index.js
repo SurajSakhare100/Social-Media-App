@@ -1,5 +1,6 @@
 import axios from "axios";
 export const base=import.meta.env.VITE_BACKEND_URL;
+const url=base;
 const handleResponse = (res) => res.data.data;
 const handleError = (err) => {
   console.log(err.message);
