@@ -87,6 +87,7 @@ function Profile() {
                             />
                         </div>
                         <div className='flex md:flex-row mt-4 md:mt-0 gap-2 md:gap-4 items-center justify-between'>
+                            
                             <Link to={`/follows/followers/${user?._id}`}>
                                 <button className='btn btn-info'>{followerCount} followers</button>
                             </Link>

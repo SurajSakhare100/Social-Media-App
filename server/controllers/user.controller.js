@@ -88,12 +88,12 @@ const loginUser = asyncHandler(async (req, res) => {
           new ApiResponse(
             404,
             "googleissue",
-            "This account is registered using Google. Please sign in using Google"
+            "This account is registered using Google Provider. Please sign in using Google"
           )
         );
       throw new ApiError(
         400,
-        "This account is registered using Google. Please sign in using Google."
+        "This account is registered using Google Provider. Please sign in using Google"
       );
     }
 

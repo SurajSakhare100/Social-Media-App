@@ -16,7 +16,7 @@ function Login() {
         setError(null); // Clear previous errors
         try {
             const data=await dispatch(loginUser({ email, password }))
-            if(data.payload=="This account is registered using Google. Please sign in using Google"){
+            if(data.payload=="This account is registered using Google Provider. Please sign in using Google"){
                 console.log(data.payload)
                 handleErrorPopup(data.payload)
             }else{
