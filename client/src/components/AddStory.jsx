@@ -16,10 +16,8 @@ const AddStory = () => {
 
     useEffect(() => {
         // Dispatch the fetchStories action with the following_ids
-        if (user.isAuthenticated) {
             dispatch(fetchStories());
-        }
-    }, [dispatch, user.isAuthenticated]);
+    }, [dispatch]);
 
     const handleStoryUpload = async (event) => {
         const file = event.target.files[0];
@@ -70,10 +68,10 @@ const AddStory = () => {
                 <p>No stories available.</p>
             ) : (
                 stories?.map((story) => (
-                    <Link key={story.userId._id} to={`/story/${story.userId._id}`} className='flex flex-col items-center flex-wrap'>
+                    <Link key={story.userId._id} to={`/story/${story?.userId._id}`} className='flex flex-col items-center flex-wrap'>
                         <div className="relative w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center">
                             <img
-                                src={story.userId.profilePicture} // Adjust based on your API response structure
+                                src={story?.userId.profilePicture} // Adjust based on your API response structure
                                 alt="Story"
                                 className='w-20 h-20 rounded-full object-cover hover:scale-110 ease-in-out'
                             />
