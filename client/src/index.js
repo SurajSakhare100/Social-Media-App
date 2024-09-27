@@ -25,7 +25,7 @@ const createFormData = (data) => {
 // Post-related functions
 const getAllPosts = async () => {
   try {
-    const response = await axiosInstance.get(`${url}/api/v1/post/getAllPosts`);
+    const response = await axiosInstance.get(`${url}/api/v1/posts/getAllPosts`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -72,7 +72,7 @@ export const deleteComment = async (commentId) => {
 const uploadPost = async (post) => {
   try {
     const formData = createFormData(post);
-    const response = await axiosInstance.post(`${url}/api/v1/post/createpost`, formData, {
+    const response = await axiosInstance.post(`${url}/api/v1/posts/createpost`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

@@ -100,8 +100,8 @@ function Profile() {
                     </div>
                     <div className='mt-2'>
                         <div className='md:text-left'>
-                            <h1 className='text-2xl font-semibold'>{user?.username}</h1>
-                            <h2 className='text-md text-gray-600'>{user?.email}</h2>
+                            <h1 className='text-2xl font-semibold'>{user?.profileName}</h1>
+                            <h2 className='text-md text-gray-600'>{user?.username}</h2>
                             {user?.location && <h3 className='text-sm text-gray-500'>{user.location}</h3>}
                             {user?.website && (
                                 <a href={user.website} className='text-blue-500' target='_blank' rel='noopener noreferrer'>
