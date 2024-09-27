@@ -3,6 +3,7 @@ import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import { options } from '../utils/constant.js';
 import { generateTokens } from './user.controller.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
