@@ -143,7 +143,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // Get User by ID
 const getUserById = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("username email profilePicture");
+    const user = await User.findById(req.params.id).select("username email profileName profilePicture bio");
     if (!user) throw new ApiError(404, "User not found");
 
     res.status(200).json(new ApiResponse(200, user, "User fetched successfully"));

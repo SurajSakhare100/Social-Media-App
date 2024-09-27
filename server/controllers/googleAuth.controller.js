@@ -1,12 +1,11 @@
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import { options } from '../utils/constant.js';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
-// Get Google OAuth tokens using the authorization code
+// Function to get Google OAuth tokens
 const getGoogleTokens = async (code) => {
     const { data } = await axios.post(GOOGLE_TOKEN_URL, {
         code,
@@ -18,7 +17,7 @@ const getGoogleTokens = async (code) => {
     return data;
 };
 
-// Fetch Google user information using access token
+// Function to fetch Google user information
 const getGoogleUserInfo = async (access_token) => {
     const { data } = await axios.get(GOOGLE_USERINFO_URL, {
         headers: {
@@ -33,14 +32,14 @@ export const googleLogin = async (req, res) => {
     try {
         const { code } = req.query;
 
-        // 1. Exchange code for tokens
+        // Exchange code for tokens
         const googleTokens = await getGoogleTokens(code);
         const { access_token } = googleTokens;
 
-        // 2. Get user info from Google
+        // Get user info from Google
         const userInfo = await getGoogleUserInfo(access_token);
 
-        // 3. Check if user exists
+        // Check if user exists
         let user = await User.findOne({ email: userInfo.email });
 
         if (!user) {
@@ -49,7 +48,7 @@ export const googleLogin = async (req, res) => {
                 return res.status(400).json({ message: 'User information is incomplete.' });
             }
 
-            // 4. If new user, create one
+            // Create a new user if not found
             user = await User.create({
                 username: userInfo.name, // Google name as username
                 email: userInfo.email,
@@ -62,15 +61,15 @@ export const googleLogin = async (req, res) => {
             console.log('New user created:', user.email);
         }
 
-        // 5. Generate JWT tokens (assuming you have `generateAccessToken` and `generateRefreshToken` methods in your User model)
+        // Generate JWT tokens
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 
-        // 6. Store refresh token in database
+        // Store refresh token in database
         user.refreshToken = refreshToken;
         await user.save();
 
-        // 7. Send tokens in cookies
+        // Send tokens in cookies
         res.status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)

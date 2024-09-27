@@ -111,9 +111,6 @@ function Profile() {
                         </div>
                         <div className='mt-4 md:text-left'>
                             <p className='text-lg text-gray-700'>{user?.bio}</p>
-                            <p className='text-gray-600 mt-2'>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam fuga nemo recusandae nulla nobis impedit excepturi soluta cupiditate ea molestias.
-                            </p>
                         </div>
                     </div>
                     {
