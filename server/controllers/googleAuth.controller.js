@@ -36,23 +36,17 @@ const getGoogleUserInfo = async (access_token) => {
     }
 };
 
-// Google login controller
 export const googleLoginAuth = async (req, res) => {
     try {
-        const { code } = req.query;
+        const { token } = req.body;
 
-        if (!code) {
-            return res.status(400).json({ message: 'Authorization code not provided' });
+        if (!token) {
+            return res.status(400).json({ message: 'Access token not provided' });
         }
 
-        // Exchange code for Google OAuth tokens
-        const googleTokens = await getGoogleTokens(code);
-        const { access_token } = googleTokens;
-
         // Get user info from Google using access token
-        const userInfo = await getGoogleUserInfo(access_token);
+        const userInfo = await getGoogleUserInfo(token);
 
-        // Find the user by email or create a new one if it doesn't exist
         let user = await User.findOne({ email: userInfo.email });
 
         if (!user) {
@@ -60,9 +54,9 @@ export const googleLoginAuth = async (req, res) => {
                 return res.status(400).json({ message: 'Incomplete user information from Google' });
             }
 
-            // Create a new user if not found
+            // Create new user if not found
             user = new User({
-                username: userInfo.name, 
+                username: userInfo.name,
                 email: userInfo.email,
                 profileName: userInfo.name,
                 profilePicture: userInfo.picture,
@@ -71,7 +65,6 @@ export const googleLoginAuth = async (req, res) => {
             });
 
             await user.save();
-            console.log('New user created:', user.email);
         }
 
         // Generate JWT tokens
@@ -87,11 +80,9 @@ export const googleLoginAuth = async (req, res) => {
             { expiresIn: '7d' }
         );
 
-        // Save refresh token in user document
         user.refreshToken = refreshToken;
         await user.save();
 
-        // Set cookies with tokens and respond with user data
         res.status(200)
             .cookie('accessToken', accessToken, options)
             .cookie('refreshToken', refreshToken, options)
