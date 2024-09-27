@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import GoogleLogin from '../components/GoogleLogin';
 import { Link, useNavigate } from 'react-router-dom';
+import { base } from '..';
 
 function EmailVerificationForm() {
     const [email, setEmail] = useState('');

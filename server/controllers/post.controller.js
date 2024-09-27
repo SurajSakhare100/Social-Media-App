@@ -179,7 +179,6 @@ const deletePost = asyncHandler(async (req, res) => {
     if (!post) {
       throw new ApiError(404, "Post not found");
     }
-    console.log(post)
 
     if (post.user.toString() !== req.user._id.toString()) {
       throw new ApiError(403, "You are not authorized to delete this post");
