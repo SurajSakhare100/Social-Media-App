@@ -37,7 +37,7 @@ const getGoogleUserInfo = async (access_token) => {
 };
 
 // Google login controller
-export const googleLogin = async (req, res) => {
+export const googleLoginAuth = async (req, res) => {
     try {
         const { code } = req.query;
 

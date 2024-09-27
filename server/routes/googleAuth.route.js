@@ -1,9 +1,9 @@
 import express from 'express';
-import { googleLogin } from '../controllers/authController.js';
-
+import {googleLoginAuth} from '../controllers/googleAuth.controller.js'
 const router = express.Router();
 
+
 // Route for handling Google OAuth login
-router.get('/google', googleLogin);
+router.get('/google', googleLoginAuth);
 
 export default router;
