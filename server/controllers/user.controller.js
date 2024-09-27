@@ -7,10 +7,15 @@ import { options } from "../utils/constant.js";
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password ,profileName} = req.body;
+  const { username, email, password, profileName } = req.body;
   const avatarLocalPath = req.file?.path;
 
   try {
+    if (!password) {
+      return res
+        .status(400)
+        .json({ message: "Password is required for local users" });
+    }
     if (!username || !email || !password || !avatarLocalPath) {
       throw new ApiError(400, "All fields and an avatar are required");
     }
@@ -25,13 +30,20 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
       profilePicture: avatar.url,
-      provider:"devnet"
+      provider: "devnet",
     });
 
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
-    res.status(201).json(new ApiResponse(201, createdUser, "User registered successfully"));
+    const createdUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+    res
+      .status(201)
+      .json(new ApiResponse(201, createdUser, "User registered successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Internal Server Error");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Internal Server Error"
+    );
   }
 });
 
@@ -48,7 +60,10 @@ const generateTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to generate tokens");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to generate tokens"
+    );
   }
 };
 
@@ -58,7 +73,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   try {
     // Check if email and password are provided
-    if (!email || !password) throw new ApiError(400, "Email and password are required");
+    if (!email || !password)
+      throw new ApiError(400, "Email and password are required");
 
     // Find the user by email
     const user = await User.findOne({ email });
@@ -66,8 +82,19 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // Check if the user signed up via Google (no password)
     if (!user.password) {
-      res.status(404).json(new ApiResponse(404, "googleissue" , "This account is registered using Google. Please sign in using Google"))
-      throw new ApiError(400, "This account is registered using Google. Please sign in using Google.");
+      res
+        .status(404)
+        .json(
+          new ApiResponse(
+            404,
+            "googleissue",
+            "This account is registered using Google. Please sign in using Google"
+          )
+        );
+      throw new ApiError(
+        400,
+        "This account is registered using Google. Please sign in using Google."
+      );
     }
 
     // Validate password (uncomment this if you have a password validation method)
@@ -78,14 +105,23 @@ const loginUser = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateTokens(user._id);
 
     // Return response with tokens and user data
-    res.status(200)
+    res
+      .status(200)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
-      .json(new ApiResponse(200, { ...user.toObject(), password: undefined }, "Logged in successfully"));
-
+      .json(
+        new ApiResponse(
+          200,
+          { ...user.toObject(), password: undefined },
+          "Logged in successfully"
+        )
+      );
   } catch (error) {
     // Catch and throw errors as an ApiError
-    throw new ApiError(error.statusCode || 500, error.message || "Login failed");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Login failed"
+    );
   }
 });
 
@@ -93,12 +129,16 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.user._id, { $unset: { refreshToken: 1 } });
-    res.status(200)
+    res
+      .status(200)
       .clearCookie("accessToken")
       .clearCookie("refreshToken")
       .json(new ApiResponse(200, {}, "User logged out successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Logout failed");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Logout failed"
+    );
   }
 });
 
@@ -106,9 +146,14 @@ const logoutUser = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   try {
     const user = req.user;
-    res.status(200).json(new ApiResponse(200, user, "User data fetched successfully"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, user, "User data fetched successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to fetch user data");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to fetch user data"
+    );
   }
 });
 
@@ -124,9 +169,14 @@ const changePassword = asyncHandler(async (req, res) => {
 
     user.password = newPassword;
     await user.save();
-    res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Password changed successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to change password");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to change password"
+    );
   }
 });
 
@@ -134,21 +184,33 @@ const changePassword = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
     const users = await User.find().select("-password -refreshToken");
-    res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, users, "Users fetched successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to fetch users");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to fetch users"
+    );
   }
 });
 
 // Get User by ID
 const getUserById = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("username email profileName profilePicture bio");
+    const user = await User.findById(req.params.id).select(
+      "username email profileName profilePicture bio"
+    );
     if (!user) throw new ApiError(404, "User not found");
 
-    res.status(200).json(new ApiResponse(200, user, "User fetched successfully"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, user, "User fetched successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to fetch user");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to fetch user"
+    );
   }
 });
 
@@ -178,9 +240,14 @@ const updateUserDetails = asyncHandler(async (req, res) => {
 
     if (!updatedUser) throw new ApiError(404, "User not found");
 
-    res.status(200).json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
   } catch (error) {
-    throw new ApiError(error.statusCode || 500, error.message || "Failed to update user details");
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to update user details"
+    );
   }
 });
 

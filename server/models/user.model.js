@@ -22,8 +22,9 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
-  },
+    // Allow password to be null for OAuth users
+    default: null,
+},
   profilePicture: {
     type: String,
     default: '',
