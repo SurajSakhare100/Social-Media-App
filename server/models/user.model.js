@@ -46,11 +46,23 @@ const userSchema = new Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
-  if (this.isModified('password') || this.isNew) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+  try {
+      // Check if it's a new user or if the password has been modified
+      if (this.isModified('password') || this.isNew) {
+          // If password is null (for Google users), just set it to an empty string or leave it as is
+          if (this.password === null || this.password === '') {
+              this.password = ''; // Set to empty string or handle as needed
+              return next(); // Skip password hashing
+          }
+
+          // If password is provided, hash it
+          const salt = await bcrypt.genSalt(10);
+          this.password = await bcrypt.hash(this.password, salt);
+      }
+      next();
+  } catch (error) {
+      next(error); // Pass any error to the next middleware
   }
-  next();
 });
 
 // Method to check if password is correct
