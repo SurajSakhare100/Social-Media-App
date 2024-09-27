@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserDetails } from '../app/slices/userSlice';
+import { handleSuccessPopup } from '../PopUp';
 
 function UpdateProfile() {
   const dispatch = useDispatch();
@@ -36,7 +37,9 @@ function UpdateProfile() {
     if (profilePicture) {
       updatedDetails.append('profilePicture', profilePicture); // Append only if a new file is selected
     }
-    dispatch(updateUserDetails(updatedDetails)); // Dispatch FormData for server handling
+    dispatch(updateUserDetails(updatedDetails)); 
+    handleSuccessPopup("your details update succsefully")
+// Dispatch FormData for server handling
   };
 
   return (

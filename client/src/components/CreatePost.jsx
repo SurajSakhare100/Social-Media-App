@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { uploadPost } from '..';
+import { handleSuccessPopup } from '../PopUp';
 
 function CreatePost() {
   const [content, setContent] = useState('');
@@ -13,6 +14,8 @@ function CreatePost() {
     setPostImage(null);
     setTags('');
     document.getElementById('my_modal_5').close();
+    handleSuccessPopup("Post upload succsefully")
+
   };
 
   return (

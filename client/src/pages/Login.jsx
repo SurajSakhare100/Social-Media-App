@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../app/slices/userSlice.js';
 import GoogleLogin from '../components/GoogleLogin.jsx';
+import { handleErrorPopup } from '../PopUp.js';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,11 +15,15 @@ function Login() {
         e.preventDefault();
         setError(null); // Clear previous errors
         try {
-            dispatch(loginUser({ email, password }))
-            if (!user.isAuthenticated) {
-                navigate('/')
+            const data=await dispatch(loginUser({ email, password }))
+            if(data.payload=="This account is registered using Google. Please sign in using Google"){
+                console.log(data.payload)
+                handleErrorPopup(data.payload)
+            }else{
+                if (user.isAuthenticated) {
+                    navigate('/')
+                }
             }
-            navigate('/')
         } catch (error) {
             setError('An error occurred during login.'); // Set error message for API errors
             console.error('Error occurred during login:', error);

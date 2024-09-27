@@ -11,8 +11,8 @@ const port = process.env.PORT || 3000;  // Use port from .env or default to 3000
 
 // Create HTTP server
 const server = http.createServer(app);
-// const clientURL ='https://itsdevnet.vercel.app';
-const clientURL ='http://localhost:5173';
+const clientURL ='https://itsdevnet.vercel.app';
+// const clientURL ='http://localhost:5173';
 
 // Initialize Socket.IO with dynamic CORS origin
 const io = new Server(server, {

@@ -1,0 +1,32 @@
+/* Toast popup style */
+.swal2-toast .beautiful-popup {
+    width: 350px;
+    margin-right: 20px;
+
+    padding: 10px 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Custom Success and Error styles */
+  .swal2-success {
+    color: #4caf50;
+  }
+  .swal2-error {
+    color: #f44336;
+  }
+  
+  /* Positioning for toast (top-right) */
+  .swal2-toast {
+    width: 350px;
+    margin-top: 20px;
+    border-radius: 10px;
+
+  }
+  .swal2-title {
+  
+  margin-bottom: 5px !important; /* Reduced margin between title and text */
+  font-size: 20px;
+  line-height: 10px; /* Slightly smaller title size */
+}

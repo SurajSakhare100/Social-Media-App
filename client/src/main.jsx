@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx'
 import './index.css'
+import './popupStyles.css';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
         element: <UpdateProfile />
       },
       {
-        path: '/story/:id',
+        path: '/story/:userId',
         element: <StoryPage />
       }
 

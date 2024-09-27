@@ -63,17 +63,23 @@ const getStories = async (req, res) => {
     const stories = await Story.find({
       userId: { $in: followingIdsArray },
     }).populate("userId", "username profileName profilePicture");
-    const groupedStories = stories.reduce((acc, story) => {
-      const userId = story.userId._id.toString();
-      if (!acc[userId]) {
-          acc[userId] = {
-              userId: story.userId,
-              stories: [],
-          };
+    
+    const groupedStories = stories.reduce((acc, { userId, ...story }) => {
+      // Find if the user is already in the accumulator
+      const userGroup = acc.find(group => group.userId._id === userId._id);
+  
+      // If the user group doesn't exist, create it
+      if (!userGroup) {
+          acc.push({ userId, stories: [story] });
+      } else {
+          // If the user group exists, push the story into that group
+          userGroup.stories.push(story);
       }
-      acc[userId].stories.push(story);
+  
       return acc;
-  }, {});
+  }, []);
+
+
     res
       .status(200)
       .json(new ApiResponse(200, groupedStories, "Stories fetched successfully"));
@@ -100,7 +106,16 @@ const getStoryById = async (req, res) => {
   }
 };
 
-
+// Get stories by user
+const getStoriesByUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+      const stories = await Story.find({ userId:userId }).populate('userId');
+      res.status(200).json(new ApiResponse(200, stories, "Story fetched successfully"));
+  } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch user stories' });
+  }
+};
 // Delete Story
 const deleteStory = async (req, res) => {
   try {
@@ -131,4 +146,4 @@ const deleteStory = async (req, res) => {
 };
 
 
-export { createStory, getStories, deleteStory ,getStoryById};
+export { createStory, getStories, deleteStory ,getStoryById,getStoriesByUser};

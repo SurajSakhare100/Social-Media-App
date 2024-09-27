@@ -24,6 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
       profilePicture: avatar.url,
+      provider:"devnet"
     });
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
@@ -55,19 +56,34 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Check if email and password are provided
     if (!email || !password) throw new ApiError(400, "Email and password are required");
 
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) throw new ApiError(404, "User not found");
+
+    // Check if the user signed up via Google (no password)
+    if (!user.password) {
+      res.status(404).json(new ApiResponse(404, "googleissue" , "This account is registered using Google. Please sign in using Google"))
+      throw new ApiError(400, "This account is registered using Google. Please sign in using Google.");
+    }
+
+    // Validate password (uncomment this if you have a password validation method)
     // const isPasswordValid = await user.isPasswordCorrect(password);
     // if (!isPasswordValid) throw new ApiError(401, "Invalid credentials");
 
+    // Generate tokens for the user
     const { accessToken, refreshToken } = await generateTokens(user._id);
+
+    // Return response with tokens and user data
     res.status(200)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
       .json(new ApiResponse(200, { ...user.toObject(), password: undefined }, "Logged in successfully"));
+
   } catch (error) {
+    // Catch and throw errors as an ApiError
     throw new ApiError(error.statusCode || 500, error.message || "Login failed");
   }
 });

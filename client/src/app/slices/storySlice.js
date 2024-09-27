@@ -35,6 +35,14 @@ export const fetchStories = createAsyncThunk(
     return response.data; // Assuming the API returns an array of stories
   }
 );
+// Async thunk for fetching stories
+export const fetchStoriesbyUser = createAsyncThunk(
+  "stories/fetchStoriesbyUser",
+  async (userId) => {
+    const response = await axiosInstance.get(`${storyUrl}/user/${userId}`);
+    return response.data; // Assuming the API returns an array of stories
+  }
+);
 
 // Async thunk for updating a story
 export const updateStory = createAsyncThunk(
@@ -93,6 +101,13 @@ const storiesSlice = createSlice({
         state.stories = action.payload.data; // Update stories with fetched data
       })
       .addCase(fetchStories.rejected, (state) => {
+        state.error = "Failed to fetch stories. Please try again."; // Set error message
+      });
+    builder
+      .addCase(fetchStoriesbyUser.fulfilled, (state, action) => {
+        state.stories = action.payload.data; // Update stories with fetched data
+      })
+      .addCase(fetchStoriesbyUser.rejected, (state) => {
         state.error = "Failed to fetch stories. Please try again."; // Set error message
       });
 

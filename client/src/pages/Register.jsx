@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { registerUser } from "../index.js";
 import axios from "axios";
 import GoogleLogin from "../components/GoogleLogin.jsx";
+import { handleSuccessPopup } from "../PopUp.js";
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -45,6 +46,8 @@ function Register() {
       formData.append("location", locationParam); // Add location to form data
       
       await registerUser(formData);
+      handleSuccessPopup("you registerd succsefully")
+
       // navigate('/login');
     } catch (error) {
       console.log(error.message);

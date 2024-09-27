@@ -36,6 +36,9 @@ const userSchema = new Schema({
     type: String,
     default: null, // Default value for clarity
   },
+  provider: {
+    type: String,
+  },
 }, {
   timestamps: true, // Automatically manage createdAt and updatedAt fields
 });

@@ -6,7 +6,7 @@ import Profile from "/profile.png";
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost, editPost ,likePost, unlikePost } from '../app/slices/postSlice.js';
-
+import { handleSuccessPopup } from '../PopUp.js';
 function Post({ post }) {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -26,7 +26,7 @@ function Post({ post }) {
         setIsLiking(true);
         try {
             if (postState.liked) {
-                 dispatch(unlikePost(postState._id));
+                dispatch(unlikePost(postState._id));
                 setPostState(prevState => ({
                     ...prevState,
                     liked: false,

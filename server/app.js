@@ -13,8 +13,8 @@ import chatRouter from './routes/chat.route.js';
 import storyRouter from './routes/story.route.js';
 
 const app = express();
-// const clientURL =  'https://itsdevnet.vercel.app';
-const clientURL =  'http://localhost:5173';
+const clientURL =  'https://itsdevnet.vercel.app';
+// const clientURL =  'http://localhost:5173';
 
 // Middleware
 // Allow only your frontend's origin
