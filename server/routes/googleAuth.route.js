@@ -4,6 +4,6 @@ const router = express.Router();
 
 
 // Route for handling Google OAuth login
-router.get('/google', googleLoginAuth);
+router.post('/google', googleLoginAuth);
 
 export default router;
