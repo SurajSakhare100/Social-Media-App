@@ -83,6 +83,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
           _id: 1, // Post ID
           content: 1, // Post content
           post_image: 1, // Image associated with the post
+          "creatorDetails._id": 1,
           "creatorDetails.username": 1, // Only include the creator's username
           "creatorDetails.email": 1, // Only include the creator's username
           "creatorDetails.profilePicture": 1, // Include the creator's profile picture
