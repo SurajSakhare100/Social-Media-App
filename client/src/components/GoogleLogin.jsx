@@ -1,16 +1,20 @@
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-import { FaGoogle } from 'react-icons/fa';
 import { base } from '../index.js';
 
 function GoogleLogin() {
     const responseGoogle = async (authResult) => {
-        try {
-            
-            const data = await axios.get(base + `/auth/google/login?code=${authResult.code}`,{withCredentials:true});
-        } catch (error) {
-            console.log('Google Login Error:', error);
+        if (authResult && authResult.code) {
+            try {
+                const data = await axios.get(`${base}/auth/google/login?code=${authResult.code}`, { withCredentials: true });
+                // Handle successful login, e.g., redirect or display success message
+            } catch (error) {
+                console.log('Google Login Error:', error);
+                // Handle errors appropriately
+            }
+        } else {
+            console.error('No auth result found');
         }
     }
 
@@ -19,6 +23,7 @@ function GoogleLogin() {
         onError: (error) => console.log('Google Login Error:', error),
         flow: "auth-code"
     });
+
 
     return (
         <div className=''>
