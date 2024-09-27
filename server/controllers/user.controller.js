@@ -7,7 +7,7 @@ import { options } from "../utils/constant.js";
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password ,profileName} = req.body;
   const avatarLocalPath = req.file?.path;
 
   try {
@@ -21,6 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const user = await User.create({
       username: username.toLowerCase(),
+      profileName,
       email,
       password,
       profilePicture: avatar.url,

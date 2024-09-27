@@ -5,14 +5,12 @@ import { handleSuccessPopup } from '../PopUp';
 function CreatePost() {
   const [content, setContent] = useState('');
   const [postImage, setPostImage] = useState(null);
-  const [tags, setTags] = useState('');
 
   const submitPost = async (e) => {
     e.preventDefault();
-    const data = await uploadPost({ content, post_image: postImage, tags });
+    const data = await uploadPost({ content, post_image: postImage });
     setContent('');
     setPostImage(null);
-    setTags('');
     document.getElementById('my_modal_5').close();
     handleSuccessPopup("Post upload succsefully")
 
@@ -54,15 +52,7 @@ function CreatePost() {
                   onChange={(e) => setContent(e.target.value)}
                 />
               </label>
-              <label className="input input-bordered flex items-center gap-2">
-                <input
-                  type="text"
-                  className="grow"
-                  placeholder="Add tags"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-              </label>
+              
               <input
                 type="file"
                 className="file-input file-input-ghost w-full max-w-sm"

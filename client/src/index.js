@@ -72,7 +72,7 @@ export const deleteComment = async (commentId) => {
 const uploadPost = async (post) => {
   try {
     const formData = createFormData(post);
-    const response = await axiosInstance.post(`${url}/api/v1/post/uploadpost`, formData, {
+    const response = await axiosInstance.post(`${url}/api/v1/post/createpost`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
