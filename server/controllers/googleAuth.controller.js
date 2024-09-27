@@ -2,6 +2,7 @@ import axios from 'axios';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import { options } from '../utils/constant.js';
+import { generateTokens } from './user.controller.js';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
@@ -56,7 +57,7 @@ export const googleLoginAuth = async (req, res) => {
 
             // Create new user if not found
             user = new User({
-                username: userInfo.name,
+                username: userInfo.name.toLowerCase(),
                 email: userInfo.email,
                 profileName: userInfo.name,
                 profilePicture: userInfo.picture,
@@ -66,35 +67,18 @@ export const googleLoginAuth = async (req, res) => {
 
             await user.save();
         }
-
-        // Generate JWT tokens
-        const accessToken = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '15m' }
+        const { accessToken, refreshToken } = await generateTokens(user._id);
+        res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+          new ApiResponse(
+            200,
+            { ...user.toObject(), password: undefined },
+            "Logged in successfully"
+          )
         );
-
-        const refreshToken = jwt.sign(
-            { id: user._id },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: '7d' }
-        );
-
-        user.refreshToken = refreshToken;
-        await user.save();
-
-        res.status(200)
-            .cookie('accessToken', accessToken, options)
-            .cookie('refreshToken', refreshToken, options)
-            .json({
-                success: true,
-                message: 'Logged in successfully',
-                user: {
-                    username: user.username,
-                    email: user.email,
-                    profilePicture: user.profilePicture,
-                },
-            });
     } catch (error) {
         console.error('Google Login Error:', error.message);
         res.status(500).json({
