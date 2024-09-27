@@ -8,6 +8,7 @@ import { handleErrorPopup, handleSuccessPopup } from '../PopUp';
 const AddStory = () => {
     const dispatch = useDispatch();
     const stories = useSelector(selectStories);
+    console.log(stories)
     const user = useSelector((state) => state.user);
     const following = useSelector((state) => state.follow.following); // Get the following list from redux
     const [error, setError] = useState('');
