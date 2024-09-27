@@ -32,7 +32,6 @@ export const fetchStories = createAsyncThunk(
   "stories/fetchStories",
   async () => {
     const response = await axiosInstance.get(`${storyUrl}/getstory`);
-    console.log(response)
     return response.data; // Assuming the API returns an array of stories
   }
 );

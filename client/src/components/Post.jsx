@@ -68,6 +68,7 @@ function Post({ post }) {
             setDropdownOpen(false); 
         }
     };
+    console.log(postState)
 
     return (
         <div className="my-4 p-4 border rounded-lg dark:bg-black bg-white dark:text-white shadow-md">
