@@ -1,4 +1,3 @@
-// app.js
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -12,9 +11,15 @@ import EmailRouter from './utils/nodeMailer.js';
 import chatRouter from './routes/chat.route.js';
 import storyRouter from './routes/story.route.js';
 
+// Determine environment: default to 'development' if not specified
+const env = process.env.NODE_ENV;
 const app = express();
-const clientURL =  'https://itsdevnet.vercel.app';
-// const clientURL =  'http://localhost:5173';
+
+// Set client URL based on environment
+const clientURL =
+  env === 'production'
+    ? process.env.CLIENT_URL || 'https://itsdevnet.vercel.app' // Production URL from .env or default
+    : 'http://localhost:5173'; // Development URL
 
 // Middleware
 // Allow only your frontend's origin

@@ -70,8 +70,8 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // Validate password (uncomment this if you have a password validation method)
-    // const isPasswordValid = await user.isPasswordCorrect(password);
-    // if (!isPasswordValid) throw new ApiError(401, "Invalid credentials");
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if (!isPasswordValid) throw new ApiError(401, "Invalid credentials");
 
     // Generate tokens for the user
     const { accessToken, refreshToken } = await generateTokens(user._id);
