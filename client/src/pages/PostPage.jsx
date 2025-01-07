@@ -14,7 +14,7 @@ function PostPage() {
     }, [dispatch, user.isAuthenticated]);
     return (
         <div className="w-full">
-            {posts.length > 0 ? (
+            {posts?.length > 0 ? (
                 posts.map(post => <Post key={post._id} post={post} />)
             ) : (
                 <p>No posts available</p>

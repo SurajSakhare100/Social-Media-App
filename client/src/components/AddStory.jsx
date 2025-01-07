@@ -64,11 +64,11 @@ const AddStory = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             {/* Display stories */}
-            {stories.length === 0 ? (
+            {stories?.length === 0 ? (
                 <p>No stories available.</p>
             ) : (
                 stories?.map((story) => (
-                    <Link key={story.userId._id} to={`/story/${story?.userId._id}`} className='flex flex-col items-center flex-wrap'>
+                    <Link key={story?.userId._id} to={`/story/${story?.userId._id}`} className='flex flex-col items-center flex-wrap'>
                         <div className="relative w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center">
                             <img
                                 src={story?.userId.profilePicture} // Adjust based on your API response structure

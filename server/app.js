@@ -10,7 +10,6 @@ import commentRouter from './routes/comment.route.js';
 import EmailRouter from './utils/nodeMailer.js';
 import chatRouter from './routes/chat.route.js';
 import storyRouter from './routes/story.route.js';
-
 // Determine environment: default to 'development' if not specified
 const env = process.env.NODE_ENV;
 const app = express();
